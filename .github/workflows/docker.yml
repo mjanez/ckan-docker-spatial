@@ -45,5 +45,5 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: master
           labels: ${{ steps.meta.outputs.labels }}
-          context: ./ckan-master
+          context: ./ckan-master/base
           file: ./ckan-master/base/Dockerfile
