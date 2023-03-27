@@ -44,4 +44,4 @@ jobs:
         tags: master
         labels: ${{ steps.meta.outputs.labels }}
         context: ./ckan-master
-        file: ./base/Dockerfile
+        file: ./ckan-master/base/Dockerfile
