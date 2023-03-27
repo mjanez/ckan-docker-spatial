@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: mjanez/ckan-spatial:master
+  IMAGE_NAME: mjanez/ckan-spatial
 
 
 jobs: 
@@ -41,7 +41,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: master
         labels: ${{ steps.meta.outputs.labels }}
         context: ./ckan-master
         file: ./base/Dockerfile
