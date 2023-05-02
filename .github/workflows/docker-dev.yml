@@ -3,9 +3,8 @@ name: Build & Push ckan-spatial - ckan-*.*.*-dev
 on:
   push:
     branches:
-      - 'ckan-*.*.*-dev'
-      - '!dev/ckan-*.*.*-dev'
-      - '!ckan-*.*.*'
+      - '*-dev*'
+      - '!dev/*'
 
 env:
   REGISTRY: ghcr.io
