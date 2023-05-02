@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - 'ckan-*.*.*'
-      - '!dev/ckan-*.*.*'
-      - '!ckan-*.*.*-dev'
+      - '!*-dev*'
+      - '!dev/*'
 
 env:
   REGISTRY: ghcr.io
