@@ -1,6 +1,6 @@
 <h1 align="center">CKAN Docker Compose - Open Data & GIS</h1>
 <p align="center">
-<a href="https://github.com/OpenDataGIS/ckan"><img src="https://img.shields.io/badge/Docker%20CKAN-2.9.8-brightgreen" alt="CKAN Versions"></a>
+<a href="https://github.com/OpenDataGIS/ckan"><img src="https://img.shields.io/badge/Docker%20CKAN-2.9.9-brightgreen" alt="CKAN Versions"></a>
 
 
 <p align="center">
@@ -26,9 +26,11 @@ The following CKAN versions are available at this repo:
 
 | CKAN Version | Type | Docker tag | Notes |
 | --- | --- | --- | --- |
-| 2.9.8-dev | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.8-dev` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. Development image. |
-| 2.9.8 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.8` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
-| master | custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest version. Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
+| 2.9.8-dev | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9-dev` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. Development image. |
+| 2.9.8 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
+| 2.9.9-dev | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9-dev` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial.  Development image. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
+| 2.9.9 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
+| master | custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image (CKAN version = 2.9.9). |
 
 >**Note**<br>
 >The custom CKAN Docker installation (with spatial extensions) can be found here: [`mjanez/ckan-docker`](https://github.com/mjanez/ckan-docker)

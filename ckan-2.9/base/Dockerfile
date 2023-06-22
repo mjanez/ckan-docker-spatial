@@ -1,4 +1,5 @@
 FROM alpine:3.15
+ARG CKAN_VERSION=ckan-2.9.9
 
 # Internals, you probably don't need to change these
 ENV APP_DIR=/srv/app
@@ -8,7 +9,7 @@ ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
 ENV GIT_URL=https://github.com/ckan/ckan.git
 # CKAN version to build
-ENV GIT_BRANCH=ckan-2.9.8
+ENV GIT_BRANCH=${CKAN_VERSION}
 # Customize these on the .env file if needed
 ENV CKAN_SITE_URL=http://localhost:5000
 ENV CKAN__PLUGINS image_view text_view recline_view datastore envvars
@@ -35,9 +36,8 @@ RUN apk add --no-cache tzdata \
         uwsgi-gevent \
         libmagic \
         curl \
-        patch \
         sed \
-        sudo && \
+        patch && \
     # Packages to build CKAN requirements and plugins
     apk add --no-cache --virtual .build-deps \
         postgresql-dev \
@@ -86,7 +86,7 @@ RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
 
 # Create a local user and group to run the app
 RUN addgroup -g 92 -S ckan && \
-    adduser -u 92 -h ${APP_DIR} -s /bin/bash -D -G ckan ckan
+    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan
 
 # Create local storage folder
 RUN mkdir -p ${CKAN_STORAGE_PATH} && \
@@ -95,14 +95,10 @@ RUN mkdir -p ${CKAN_STORAGE_PATH} && \
 COPY setup/prerun.py ${APP_DIR}
 COPY setup/start_ckan.sh ${APP_DIR}
 ADD https://raw.githubusercontent.com/ckan/ckan/${GIT_BRANCH}/wsgi.py ${APP_DIR}
+RUN chmod 644 ${APP_DIR}/wsgi.py
 
 # Create entrypoint directory for children image scripts
 ONBUILD RUN mkdir /docker-entrypoint.d
-
-RUN chown ckan -R ${APP_DIR}
-
-RUN addgroup sudo && \
-    adduser ckan sudo
 
 EXPOSE 5000
 
