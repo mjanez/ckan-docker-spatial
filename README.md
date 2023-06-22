@@ -30,7 +30,7 @@ The following CKAN versions are available at this repo:
 | 2.9.8 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
 | 2.9.9-dev | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9-dev` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial.  Development image. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
 | 2.9.9 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
-| master | custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image (CKAN version = 2.9.9). |
+| 2.9.9 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-spatial` image. |
 
 >**Note**<br>
 >The custom CKAN Docker installation (with spatial extensions) can be found here: [`mjanez/ckan-docker`](https://github.com/mjanez/ckan-docker)
