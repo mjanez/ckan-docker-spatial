@@ -21,6 +21,8 @@ WORKDIR ${APP_DIR}
 
 # Install necessary packages to run CKAN
 RUN apk add --no-cache tzdata \
+        # bash installation necessary in Python images
+        bash \
         git \
         gettext \
         postgresql-client \
