@@ -55,7 +55,7 @@ RUN apk add --no-cache tzdata \
         openssl-dev \
         libffi-dev \
         cargo \
-    # Set up PROJ
+    # Set up PROJ (pyproj 3.6.0 requires proj 9) https://github.com/pyproj4/pyproj/issues/1321
         geos-dev \
         curl-dev \
         cmake \
@@ -86,11 +86,15 @@ RUN apk add --no-cache tzdata \
 COPY setup/supervisord.conf /etc
 
 # Install CKAN
-RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
+RUN pip3 install setuptools && \
+    #FIX: Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
+    pip3 install "cython<3.0.0" wheel && pip3 install pyyaml==5.4.1 --no-build-isolation && \
+    pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
-    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/0122296c6ba4da7ef1fe1c397add09089e89409b/requirements.txt && \
+    #FIX: Temp fix zope-interface
+    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/af103ac4f6b3f11e67a8f3ceaccd63fdb424e7ac/requirements.txt && \
+    #OLD: requirements.txt ckan/ckan 2.9.9
     #pip3 install --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
