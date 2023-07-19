@@ -1,4 +1,4 @@
-FROM python:3.9-alpine3.18
+FROM alpine:3.15
 ARG CKAN_VERSION=ckan-2.9.9
 
 # Internals, you probably don't need to change these
@@ -77,7 +77,7 @@ COPY setup/supervisord.conf /etc
 RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
+   # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
     pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/693c7199c4eb6ceb87c557a5070d2fb40c19eb1a/requirements.txt && \
     #pip3 install --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
