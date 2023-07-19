@@ -72,7 +72,7 @@ RUN apk add --no-cache tzdata \
     make install && \
     cd .. && \
     rm -rf proj-9.1.1 proj.tar.gz && \
-    rm -rf /var/cache/apk/*&& \
+    rm -rf /var/cache/apk/* && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
