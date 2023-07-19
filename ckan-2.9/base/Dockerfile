@@ -64,15 +64,15 @@ RUN apk add --no-cache tzdata \
         sqlite-dev \
         gtest-dev \
         unzip && \
-    wget https://download.osgeo.org/proj/proj-9.1.1.tar.gz &&\
-    tar -xvf proj-9.1.1.tar.gz &&\
-    cd proj-9.1.1 &&\
-    cmake . &&\
-    make &&\
+    wget -O proj.tar.gz https://download.osgeo.org/proj/proj-9.1.1.tar.gz && \
+    tar -xzf proj.tar.gz && \
+    cd proj-9.1.1 && \
+    cmake . && \
+    make -j$(nproc) && \
     make install && \
-    rm -rf /var/cache/apk/* && \
-    rm -R proj-9.1.1 && \
-    rm proj-9.1.1.tar.gz && \
+    cd .. && \
+    rm -rf proj-9.1.1 proj.tar.gz && \
+    rm -rf /var/cache/apk/*&& \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
