@@ -21,9 +21,8 @@ WORKDIR ${APP_DIR}
 
 # Install necessary packages to run CKAN
 RUN apk add --no-cache tzdata \
-        # bash installation necessary in Python images
-        bash \
         git \
+        wget \
         gettext \
         postgresql-client \
         python3 \
@@ -57,10 +56,23 @@ RUN apk add --no-cache tzdata \
         libffi-dev \
         cargo \
     # Set up PROJ
-        geos-dev \ 
-        proj \
-        proj-util \
-        proj-dev && \
+        geos-dev \
+        curl-dev \
+        cmake \
+        tiff-dev \
+        sqlite \
+        sqlite-dev \
+        gtest-dev \
+        unzip && \
+    wget https://download.osgeo.org/proj/proj-9.1.1.tar.gz &&\
+    tar -xvf proj-9.1.1.tar.gz &&\
+    cd proj-9.1.1 &&\
+    cmake . &&\
+    make &&\
+    make install && \
+    rm -rf /var/cache/apk/* && \
+    rm -R proj-9.1.1 && \
+    rm proj-9.1.1.tar.gz && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
@@ -77,8 +89,8 @@ COPY setup/supervisord.conf /etc
 RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-   # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
-    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/693c7199c4eb6ceb87c557a5070d2fb40c19eb1a/requirements.txt && \
+    # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
+    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/0122296c6ba4da7ef1fe1c397add09089e89409b/requirements.txt && \
     #pip3 install --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
