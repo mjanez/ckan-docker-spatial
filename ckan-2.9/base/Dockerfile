@@ -22,6 +22,7 @@ WORKDIR ${APP_DIR}
 # Install necessary packages to run CKAN
 RUN apk add --no-cache tzdata \
         git \
+        wget \
         gettext \
         postgresql-client \
         python3 \
@@ -54,11 +55,24 @@ RUN apk add --no-cache tzdata \
         openssl-dev \
         libffi-dev \
         cargo \
-    # Set up PROJ
-        geos-dev \ 
-        proj \
-        proj-util \
-        proj-dev && \
+    # Set up PROJ (pyproj 3.6.0 requires proj 9) https://github.com/pyproj4/pyproj/issues/1321
+        geos-dev \
+        curl-dev \
+        cmake \
+        tiff-dev \
+        sqlite \
+        sqlite-dev \
+        gtest-dev \
+        unzip && \
+    wget -O proj.tar.gz https://download.osgeo.org/proj/proj-9.1.1.tar.gz && \
+    tar -xzf proj.tar.gz && \
+    cd proj-9.1.1 && \
+    cmake . && \
+    make -j$(nproc) && \
+    make install && \
+    cd .. && \
+    rm -rf proj-9.1.1 proj.tar.gz && \
+    rm -rf /var/cache/apk/* && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
@@ -72,11 +86,15 @@ RUN apk add --no-cache tzdata \
 COPY setup/supervisord.conf /etc
 
 # Install CKAN
-RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
+RUN pip3 install setuptools && \
+    #FIX: Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
+    pip3 install "cython<3.0.0" wheel && pip3 install pyyaml==5.4.1 --no-build-isolation && \
+    pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-   # Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
-    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/693c7199c4eb6ceb87c557a5070d2fb40c19eb1a/requirements.txt && \
+    #FIX: Temp fix zope-interface
+    pip3 install --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/af103ac4f6b3f11e67a8f3ceaccd63fdb424e7ac/requirements.txt && \
+    #OLD: requirements.txt ckan/ckan 2.9.9
     #pip3 install --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
