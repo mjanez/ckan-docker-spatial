@@ -5,6 +5,7 @@ on:
     types:
         - closed
     branches:
+        - master
         - 'ckan-*.*.*'
         - '!ckan-main'
         - '!dev/ckan-*.*.*'
