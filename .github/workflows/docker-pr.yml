@@ -47,7 +47,7 @@ jobs:
         id: hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }} ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }}.ghcr
+          dockerfile: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }} ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
