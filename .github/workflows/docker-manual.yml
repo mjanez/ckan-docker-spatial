@@ -31,7 +31,7 @@ jobs:
           if [[ "${{ github.head_ref }}" == "master" ]]; then
             echo "DOCKERFILE_PATH=/ckan-$(echo ${{ github.head_ref }} | sed 's/\.[0-9]$//')/base" >> $GITHUB_ENV
           else
-            echo "DOCKERFILE_PATH=$(echo ${{ github.head_ref }} | sed 's/\.[0-9]$//')/base" >> $GITHUB_ENV
+            echo "DOCKERFILE_PATH=/$(echo ${{ github.head_ref }} | sed 's/\.[0-9]$//')/base" >> $GITHUB_ENV
           fi
 
       - name: Login to registry
