@@ -24,6 +24,7 @@ RUN apk add --no-cache tzdata \
         git \
         wget \
         gettext \
+        dcron \
         postgresql-client \
         python3 \
         libxml2 \
