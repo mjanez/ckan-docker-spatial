@@ -21,12 +21,11 @@ ENV UWSGI_HARAKIRI=50
 WORKDIR ${APP_DIR}
 
 # Set up timezone
-RUN apk add --no-cache tzdata
-RUN echo ${TZ} > /etc/timezone
-# Make sure both files are not exactly the same
-RUN if ! [ /usr/share/zoneinfo/${TZ} -ef /etc/localtime ]; then \
+RUN apk add --no-cache tzdata  && \
+    echo ${TZ} > /etc/timezone && \
+    if ! [ /usr/share/zoneinfo/${TZ} -ef /etc/localtime ]; then \
         cp /usr/share/zoneinfo/${TZ} /etc/localtime ;\
-    fi ;
+    fi
 
 # Install necessary packages to run CKAN
 RUN apk add --no-cache git \
@@ -82,19 +81,19 @@ RUN apk add --no-cache git \
     # Install pip, supervisord and uwsgi
     curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
     python3 ${SRC_DIR}/get-pip.py && \
-    pip3 install supervisor && \
+    pip3 install --no-cache-dir supervisor && \
     mkdir /etc/supervisord.d && \
     rm -rf ${SRC_DIR}/get-pip.py
 
 COPY setup/supervisord.conf /etc
 
 # Install CKAN
-RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
+RUN pip3 install --no-cache-dir -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    pip3 install --no-binary markdown -r requirements.txt && \
+    pip3 install --no-cache-dir --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
-    pip3 install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
+    pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
     # Create and update CKAN config
     ckan generate config ${CKAN_INI} && \
     ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
@@ -118,6 +117,6 @@ ONBUILD RUN mkdir /docker-entrypoint.d
 
 EXPOSE 5000
 
-HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail http://localhost:5000/api/3/action/status_show || exit CMD $APP_DIR/start_ckan.sh
+HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail http://localhost:5000/api/3/action/status_show || exit CMD ["/srv/app/start_ckan.sh"]
 
-CMD $APP_DIR/start_ckan.sh
+CMD ["/srv/app/start_ckan.sh"]

@@ -18,4 +18,4 @@ COPY setup/unsafe.cert setup/unsafe.key ${APP_DIR}
 
 COPY setup/start_ckan_development.sh ${APP_DIR}
 
-CMD $APP_DIR/start_ckan_development.sh
+CMD ["/srv/app/start_ckan_development.sh"]
