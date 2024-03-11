@@ -26,6 +26,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Set DOCKERFILE_PATH
+        run: echo "DOCKERFILE_PATH=/ckan-$(echo ${{ github.head_ref }} | sed 's/\.[0-9]$//')" >> $GITHUB_ENV
+
       - name: Login to registry
         uses: docker/login-action@v3
         with:

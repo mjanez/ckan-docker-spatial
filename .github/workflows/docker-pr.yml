@@ -33,6 +33,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set DOCKERFILE_PATH
+        run: echo "DOCKERFILE_PATH=/ckan-$(echo ${{ github.head_ref }} | sed 's/\.[0-9]$//')" >> $GITHUB_ENV
+
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
