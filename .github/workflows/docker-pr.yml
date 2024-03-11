@@ -5,6 +5,7 @@ on:
     branches:
         - master
         - 'ckan-*.*.*'
+        - '!ckan-main'
         - '!dev/ckan-*.*.*'
         - '!feature/*'
         - '!fix/*'

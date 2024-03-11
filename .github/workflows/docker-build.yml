@@ -6,6 +6,7 @@ on:
         - closed
     branches:
         - 'ckan-*.*.*'
+        - '!ckan-main'
         - '!dev/ckan-*.*.*'
         - '!feature/*'
         - '!fix/*'
