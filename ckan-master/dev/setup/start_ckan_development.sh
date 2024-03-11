@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Install any local extensions in the src_extensions volume
 echo "Looking for local extensions to install..."
@@ -47,10 +47,11 @@ ckan config-tool $CKAN_INI -s DEFAULT "debug = true"
 
 # Set up the Secret key used by Beaker and Flask
 # This can be overriden using a CKAN___BEAKER__SESSION__SECRET env var
-if grep -E "beaker.session.secret ?= ?$" ckan.ini
+if grep -E "SECRET_KEY ?= ?$" ckan.ini
 then
-    echo "Setting beaker.session.secret in ini file"
-    ckan config-tool $CKAN_INI "beaker.session.secret=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
+    echo "Setting secrets in ini file"
+    ckan config-tool $CKAN_INI "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
+    ckan config-tool $CKAN_INI "WTF_CSRF_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
     JWT_SECRET=$(python3 -c 'import secrets; print("string:" + secrets.token_urlsafe())')
     ckan config-tool $CKAN_INI "api_token.jwt.encode.secret=${JWT_SECRET}"
     ckan config-tool $CKAN_INI "api_token.jwt.decode.secret=${JWT_SECRET}"
@@ -89,4 +90,8 @@ fi
 supervisord --configuration /etc/supervisord.conf &
 
 # Start the development server as the ckan user with automatic reload
-su ckan -c "/usr/bin/ckan -c $CKAN_INI run -H 0.0.0.0"
+if [ "$USE_HTTPS_FOR_DEV" = true ] ; then
+    su ckan -c "/usr/bin/ckan -c $CKAN_INI run -H 0.0.0.0 -C unsafe.cert -K unsafe.key"
+else
+    su ckan -c "/usr/bin/ckan -c $CKAN_INI run -H 0.0.0.0"
+fi

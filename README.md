@@ -37,8 +37,30 @@ The following CKAN versions are available at this repo:
 
 ### Building and Pushing the images
 
-The images can be built locally and tagged appropriately.
+The images can be built locally and tagged appropriately so they can then be pushed into the CKAN DockerHub repo
+assuming you have the correct permission to do so
 
+For CKAN 2.9.7 base images, go to the `ckan-2.9/base` directory and use the Makefile included:
+
+    cd ckan-2.9/base
+    make build
+    make push
+
+For CKAN 2.9.7 dev images, go to the `ckan-2.9/dev` directory and use the Makefile included:
+
+    cd ckan-2.9/dev
+    make build
+    make push
+
+The CKAN 2.10 base and dev images are available as the dev branches at the moment
+
+    cd ckan-2.10/base
+    make build
+    make push
+
+    cd ckan-2.10/dev
+    make build
+    make push
 
 ### Scanning the images for vulnerabilites
 
