@@ -15,7 +15,7 @@
 ## Overview
 Contains [CKAN spatial images](https://github.com/mjanez/ckan-docker-spatial/pkgs/container/ckan-base-spatial) for the different components of CKAN Cloud and a [Docker compose spatial environment](https://github.com/mjanez/ckan-docker) for development and testing Open Data portals.
 
->![WARNING]
+> ![WARNING]
 >This is a **custom base images of CKAN** with specific extensions for spatial data. For the official Git Repo, please have a look: [Pre-configured CKAN Docker images](https://github.com/ckan/ckan-docker-base).
 
 # Pre-configured CKAN Docker images
@@ -30,7 +30,7 @@ The following CKAN versions are available at this repo:
 | 2.10.3 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.3` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/26). |
 | 2.10.3 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image. |
 
->![NOTE]
+> ![NOTE]
 >The custom CKAN Docker installation (with spatial extensions) can be found here: [`mjanez/ckan-docker`](https://github.com/mjanez/ckan-docker)
 
 ### Building and Pushing the images
