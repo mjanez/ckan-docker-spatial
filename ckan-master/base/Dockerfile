@@ -65,11 +65,10 @@ RUN apk add --no-cache git \
         libffi-dev \
         cargo \
     # Set up PROJ
-        geos-dev \ 
+        geos-dev \
         proj \
         proj-util \
-        proj-dev && \
-        geos-dev \
+        proj-dev \
         curl-dev \
         cmake \
         tiff-dev \
