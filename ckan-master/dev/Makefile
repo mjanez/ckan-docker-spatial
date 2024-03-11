@@ -1,7 +1,7 @@
 .PHONY: all help build build-all push
 SHELL := /bin/bash
-CKAN_VERSION=2.9.9
-TAG_NAME="ckan/ckan-dev:$(CKAN_VERSION)"
+CKAN_VERSION=master
+TAG_NAME="mjanez/ckan-base-spatial:ckan-$(CKAN_VERSION)-dev"
 
 all: help
 help:
@@ -11,3 +11,4 @@ build:	## Build a CKAN 2.x-dev image , `make build`
 	docker build --build-arg="CKAN_VERSION=ckan-$(CKAN_VERSION)" -t $(TAG_NAME) .
 
 push: ## Push a CKAN 2.x-dev image to the DockerHub registry, `make push`
+	docker push $(TAG_NAME)
