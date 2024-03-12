@@ -28,7 +28,7 @@ jobs:
 
       - name: Set DOCKERFILE_PATH
         run: |
-          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/^ckan-//' | sed 's/\.[0-9]*$//' | sed 's/-dev$//')
+          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/^ckan-//' | sed 's/\.[0-9]*-dev$/-dev/' | sed 's/-dev$//')
           if [[ "${{ env.BRANCH }}" == "ckan-master" ]]; then
             echo "DOCKERFILE_PATH=/ckan-master/base" >> $GITHUB_ENV
           elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
