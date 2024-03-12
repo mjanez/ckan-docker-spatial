@@ -4,10 +4,10 @@ on: workflow_dispatch
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-  TAG: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+  IMAGE_NAME: mjanez/ckan-base-spatial
+  TAG: ghcr.io/mjanez/ckan-base-spatial:${{ github.head_ref }}
   CONTEXT: .
-  BRANCH: ${{ github.ref_name }}
+  BRANCH: ${{ github.head_ref }}
   DOCKERFILE_PATH: /ckan
   DOCKERFILE: Dockerfile
 
