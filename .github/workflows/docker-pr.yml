@@ -12,7 +12,7 @@ on:
 
 env:
     REGISTRY: ghcr.io
-    IMAGE_NAME: ckan-docker
+    IMAGE_NAME: mjanez/ckan-base-spatial
     CONTEXT: .
     BRANCH: ${{ github.head_ref }}
     DOCKERFILE_PATH: /ckan
@@ -36,8 +36,8 @@ jobs:
 
       - name: Set DOCKERFILE_PATH
         run: |
-          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/^ckan-//' | sed 's/\.[0-9]\{1,2\}$//' | sed 's/-dev$//')
-          if [[ "${{ env.BRANCH }}" == *"-master" ]]; then
+          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/^ckan-//' | sed 's/\.[0-9]*$//' | sed 's/-dev$//')
+          if [[ "${{ env.BRANCH }}" == "ckan-master" ]]; then
             echo "DOCKERFILE_PATH=/ckan-master/base" >> $GITHUB_ENV
           elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
             echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/dev" >> $GITHUB_ENV
