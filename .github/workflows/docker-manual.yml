@@ -28,12 +28,13 @@ jobs:
 
       - name: Set DOCKERFILE_PATH
         run: |
-          if [[ "${{ github.head_ref }}" == "master" ]]; then
+          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/^ckan-//' | sed 's/\([0-9]\)\.[0-9]*-dev$/\1-dev/' | sed 's/-dev$//')
+          if [[ "${{ env.BRANCH }}" == "ckan-master" ]]; then
             echo "DOCKERFILE_PATH=/ckan-master/base" >> $GITHUB_ENV
-          elif [[ "${{ github.head_ref }}" == *"-dev" ]]; then
-            echo "DOCKERFILE_PATH=/ckan-$(echo ${{ github.head_ref }} | cut -d '.' -f 1,2)/dev" >> $GITHUB_ENV
+          elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
+            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/dev" >> $GITHUB_ENV
           else
-            echo "DOCKERFILE_PATH=/ckan-$(echo ${{ github.head_ref }} | cut -d '.' -f 1,2)/base" >> $GITHUB_ENV
+            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/base" >> $GITHUB_ENV
           fi
 
       - name: Login to registry
