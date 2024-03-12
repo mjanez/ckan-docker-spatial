@@ -1,0 +1,58 @@
+name: Test ckan-docker images (PR)
+
+on:
+  pull_request:
+    branches:
+        - master
+        - 'ckan-*.*.*'
+        - '!ckan-main'
+        - '!dev/ckan-*.*.*'
+        - '!feature/*'
+        - '!fix/*'
+
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ckan-docker
+    CONTEXT: .
+    BRANCH: ${{ github.head_ref }}
+    DOCKERFILE_PATH: /ckan
+    DOCKERFILE: Dockerfile
+    HADOLINT_VERSION: 2.12.0
+
+jobs:
+  docker:
+    name: runner/test-docker-pr:${{ github.head_ref }}
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set DOCKERFILE_PATH
+        run: |
+          if [[ "${{ env.BRANCH }}" == "master" ]]; then
+            echo "DOCKERFILE_PATH=/ckan-$(echo ${{ env.BRANCH }} | sed 's/\.[0-9]\{1,2\}$//')/base" >> $GITHUB_ENV
+          else
+            echo "DOCKERFILE_PATH=/$(echo ${{ env.BRANCH }} | sed 's/\.[0-9]\{1,2\}$//')/base" >> $GITHUB_ENV
+          fi
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Linting Dockerfiles and annotate code inline in the github PR viewer
+        id: hadolint
+        uses: jbergstroem/hadolint-gh-action@v1.12.2
+        with:
+          dockerfile: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }} ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }}
+          version: ${{ env.HADOLINT_VERSION }}
+          annotate: true
+          error_level: -1
