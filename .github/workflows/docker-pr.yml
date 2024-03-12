@@ -36,10 +36,13 @@ jobs:
 
       - name: Set DOCKERFILE_PATH
         run: |
+          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed 's/\.[0-9]\{1,2\}$//' | sed 's/-dev$//')
           if [[ "${{ env.BRANCH }}" == "master" ]]; then
-            echo "DOCKERFILE_PATH=/ckan-$(echo ${{ env.BRANCH }} | sed 's/\.[0-9]\{1,2\}$//')/base" >> $GITHUB_ENV
+            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/base" >> $GITHUB_ENV
+          elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
+            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/dev" >> $GITHUB_ENV
           else
-            echo "DOCKERFILE_PATH=/$(echo ${{ env.BRANCH }} | sed 's/\.[0-9]\{1,2\}$//')/base" >> $GITHUB_ENV
+            echo "DOCKERFILE_PATH=/${BRANCH_TRIMMED}/base" >> $GITHUB_ENV
           fi
 
       - name: Extract Docker metadata
