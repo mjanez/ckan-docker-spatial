@@ -22,6 +22,6 @@ Container Canary
 Create a file used for validation (call it ckan.yaml)
 
 Run the following:
-canary validate --file ckan.yaml mjanez/ckan-base-spatial:ckan-2.9.9
+canary validate --file ckan.yaml mjanez/ckan-base-spatial:ckan-2.9.10
 
-Make sure a CKAN container using the same port as mjanez/ckan-base-spatial:ckan-2.9.9 is not running before starting the validation
+Make sure a CKAN container using the same port as mjanez/ckan-base-spatial:ckan-2.9.10 is not running before starting the validation
