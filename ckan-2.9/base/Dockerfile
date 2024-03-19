@@ -1,5 +1,5 @@
 FROM alpine:3.15
-ARG CKAN_VERSION=ckan-2.9.10
+ARG CKAN_VERSION=ckan-2.9.11
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC
@@ -110,7 +110,7 @@ RUN pip3 install --no-cache-dir setuptools && \
     PIP_CONSTRAINT=/tmp/constraint.txt pip3 install PyYAML==5.4.1 && \
     # end workaround
     pip3 install --no-cache-dir --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/af103ac4f6b3f11e67a8f3ceaccd63fdb424e7ac/requirements.txt && \
-    #OLD: requirements.txt ckan/ckan 2.9.10
+    #OLD: requirements.txt ckan/ckan 2.9.11
     #pip3 install --no-cache-dir --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \

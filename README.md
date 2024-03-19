@@ -28,8 +28,9 @@ The following CKAN versions are available at this repo:
 | --- | --- | --- | --- |
 | 2.9.9 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
 | 2.9.10 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.10` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/32). |
-| 2.10.3 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.3` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/26). |
-| 2.10.3 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image. |
+| 2.9.11 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.11` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
+| 2.10.4 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.3` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
+| 2.10.4 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image. |
 
 > [!NOTE]
 >The custom CKAN Docker installation (with spatial extensions) can be found here: [`mjanez/ckan-docker`](https://github.com/mjanez/ckan-docker)
@@ -39,13 +40,13 @@ The following CKAN versions are available at this repo:
 The images can be built locally and tagged appropriately so they can then be pushed into the CKAN DockerHub repo
 assuming you have the correct permission to do so
 
-For CKAN 2.9.10 base images, go to the `ckan-2.9/base` directory and use the Makefile included:
+For CKAN 2.9.11 base images, go to the `ckan-2.9/base` directory and use the Makefile included:
 
     cd ckan-2.9/base
     make build
     make push
 
-For CKAN 2.9.10 dev images, go to the `ckan-2.9/dev` directory and use the Makefile included:
+For CKAN 2.9.11 dev images, go to the `ckan-2.9/dev` directory and use the Makefile included:
 
     cd ckan-2.9/dev
     make build
