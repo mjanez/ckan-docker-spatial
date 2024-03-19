@@ -24,57 +24,57 @@ WORKDIR ${APP_DIR}
 RUN apk add --no-cache tzdata  && \
     echo ${TZ} > /etc/timezone && \
     if ! [ /usr/share/zoneinfo/${TZ} -ef /etc/localtime ]; then \
-        cp /usr/share/zoneinfo/${TZ} /etc/localtime ;\
+    cp /usr/share/zoneinfo/${TZ} /etc/localtime ;\
     fi
 
 # Install necessary packages to run CKAN
 RUN apk add --no-cache git \
-        wget \
-        gettext \
-        dcron \
-        postgresql-client \
-        python3 \
-        libxml2 \
-        libxslt \
-        musl-dev \
-        uwsgi \
-        uwsgi-http \
-        uwsgi-corerouter \
-        uwsgi-python \
-        py3-gevent \
-        uwsgi-gevent \
-        libmagic \
-        curl \
-        patch \
-        bash && \
+    wget \
+    gettext \
+    dcron \
+    postgresql-client \
+    python3 \
+    libxml2 \
+    libxslt \
+    musl-dev \
+    uwsgi \
+    uwsgi-http \
+    uwsgi-corerouter \
+    uwsgi-python \
+    py3-gevent \
+    uwsgi-gevent \
+    libmagic \
+    curl \
+    patch \
+    bash && \
     # Packages to build CKAN requirements and plugins
     apk add --no-cache --virtual .build-deps \
-        postgresql-dev \
-        gcc \
-        make \
-        g++ \
-        autoconf \
-        automake \
-    	libtool \
-        python3-dev \
-        libxml2-dev \
-        libxslt-dev \
-        linux-headers \
-        openssl-dev \
-        libffi-dev \
-        cargo \
+    postgresql-dev \
+    gcc \
+    make \
+    g++ \
+    autoconf \
+    automake \
+    libtool \
+    python3-dev \
+    libxml2-dev \
+    libxslt-dev \
+    linux-headers \
+    openssl-dev \
+    libffi-dev \
+    cargo \
     # Set up PROJ
-        geos-dev \
-        proj \
-        proj-util \
-        proj-dev \
-        curl-dev \
-        cmake \
-        tiff-dev \
-        sqlite \
-        sqlite-dev \
-        gtest-dev \
-        unzip && \
+    geos-dev \
+    proj \
+    proj-util \
+    proj-dev \
+    curl-dev \
+    cmake \
+    tiff-dev \
+    sqlite \
+    sqlite-dev \
+    gtest-dev \
+    unzip && \
     rm -rf /var/cache/apk/* && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
