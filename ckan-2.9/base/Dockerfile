@@ -1,5 +1,5 @@
 FROM alpine:3.15
-ARG CKAN_VERSION=ckan-2.9.11
+ARG CKAN_VERSION=ckan-2.9.7
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC

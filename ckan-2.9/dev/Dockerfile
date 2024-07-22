@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.11
+FROM ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.7
 
 ENV APP_DIR=/srv/app
 ENV SRC_EXTENSIONS_DIR=/srv/app/src_extensions
