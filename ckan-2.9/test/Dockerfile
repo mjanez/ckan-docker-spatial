@@ -6,7 +6,7 @@ ENV APP_DIR=/srv/app
 ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
 ENV CKAN_TEST_INI=${APP_DIR}/test.ini
-ENV NODE_MAJOR_VERSION="18"
+ENV NODE_VERSION="18"
 ENV TZ=UTC
 # Custom scripts from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
@@ -14,12 +14,19 @@ ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.9.11-test
 
 # Install packages needed by test requirements
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libffi-dev \
-    netcat \
-    util-linux \
-    libsasl2-dev \
-    libssl-dev \
+RUN RUN apt-get update && apt-get install -y --no-install-recommends \
+        # install packages for additional bits and bobs (like the entrypoint script)
+        wget \
+        git \
+        curl \
+        netcat \
+        uuid-runtime \
+        libffi-dev \
+        netcat-openbsd \
+        util-linux \
+        libsasl2-dev \
+        libssl-dev \
+    && apt-get -q clean \
     && rm -rf /var/lib/apt/lists/*
 
 ## Copy test_ckan.sh
@@ -32,13 +39,9 @@ RUN if [ "$CKAN_VERSION" = "2.9" ]; then \
     fi
 
 # Install NodeJS
-WORKDIR /usr/local
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && npm update -g npm \
-    && rm -rf /var/lib/apt/lists/*
+RUN curl -sL "https://deb.nodesource.com/setup_${NODE_VERSION}.x" | bash && \
+    apt-get install -q -y nodejs && \
+    npm update -g npm
 
 # Clone the repository and copy the required folders for nhm custom scripts
 WORKDIR /tmp
