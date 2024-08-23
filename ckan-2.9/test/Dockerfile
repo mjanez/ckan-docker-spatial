@@ -55,12 +55,12 @@ RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     chmod +x ${APP_DIR}/scripts/*.sh
 
 # Update pip to the latest version
-RUN pip3 install --upgrade pip
+RUN pip install --upgrade pip
 
 WORKDIR ${CKAN_DIR}
 
 # Install CKAN test requirements
-RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
+RUN pip install --no-cache-dir -r dev-requirements.txt && \
     npm install . --only=prod 
 
 WORKDIR ${APP_DIR}
