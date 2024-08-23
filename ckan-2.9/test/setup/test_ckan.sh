@@ -7,11 +7,11 @@ ckan -c test.ini db init
 echo "[ckan-test.run-tests] Database pending migrations"
 ckan -c test.ini db pending-migrations --apply
 
-# Default test directory
+# Default test directory and output file
 TEST_DIR="tests"
 
 # Parse options
-while getopts 'cd:' OPTION; do
+while getopts 'cd:o:' OPTION; do
   case "$OPTION" in
     c)
         RUN_COVERALLS=1;;
