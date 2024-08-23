@@ -34,7 +34,7 @@ RUN chmod +x ${APP_DIR}/test_ckan.sh
 
 # Conditionally install pytest-rerunfailures if CKAN version is 2.9
 RUN if [ "$CKAN_VERSION" = "2.9" ]; then \
-        pip install -U pytest-rerunfailures; \
+        pip3  install -U pytest-rerunfailures; \
     fi
 
 # Install NodeJS
@@ -54,13 +54,13 @@ RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     chmod +x ${APP_DIR}/waits/*.sh && \
     chmod +x ${APP_DIR}/scripts/*.sh
 
-# Update pip to the latest version
-RUN pip install --upgrade pip
+# Update pip3  to the latest version
+RUN pip3  install --upgrade pip
 
 WORKDIR ${CKAN_DIR}
 
 # Install CKAN test requirements
-RUN pip install --no-cache-dir -r dev-requirements.txt && \
+RUN pip3  install --no-cache-dir -r dev-requirements.txt && \
     npm install . --only=prod 
 
 WORKDIR ${APP_DIR}
