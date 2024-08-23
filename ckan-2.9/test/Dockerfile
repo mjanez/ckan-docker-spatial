@@ -19,14 +19,17 @@ RUN apk add --no-cache libffi-dev \
     && rm -rf /var/cache/apk/*
 
 # Install NodeJS
-RUN NODE_VERSION=$(curl -sL https://unofficial-builds.nodejs.org/download/release/index.tab | grep -E "^v${NODE_MAJOR_VERSION}\." | head -n 1 | cut -f 1) && \
-    curl -sL "https://unofficial-builds.nodejs.org/download/release/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64-musl.tar.xz" | tar -xJ && \
+WORKDIR /usr/local
+RUN NODE_VERSION=$(wget --progress=dot:giga -qO- https://unofficial-builds.nodejs.org/download/release/index.tab | grep -E "^v${NODE_MAJOR_VERSION}\." | head -n 1 | cut -f 1) && \
+    wget --progress=dot:giga "https://unofficial-builds.nodejs.org/download/release/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64-musl.tar.xz" && \
+    tar -xJf node-${NODE_VERSION}-linux-x64-musl.tar.xz && \
     mv node-${NODE_VERSION}-linux-x64-musl /usr/local/node && \
     ln -s /usr/local/node/bin/node /usr/local/bin/node && \
     ln -s /usr/local/node/bin/npm /usr/local/bin/npm && \
     npm update -g npm
 
 # Clone the repository and copy the required folders for nhm custom scripts
+WORKDIR /tmp
 RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     mkdir -p ${APP_DIR}/waits && \
     mkdir -p ${APP_DIR}/scripts && \
@@ -37,7 +40,7 @@ RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
 WORKDIR ${CKAN_DIR}
 
 # Install CKAN dev requirements
-RUN pip3 install -r dev-requirements.txt && \
+RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
     npm install . --only=prod 
 
 WORKDIR ${APP_DIR}
