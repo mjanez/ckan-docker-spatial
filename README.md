@@ -6,6 +6,7 @@
 <p align="center">
     <a href="#overview">Overview</a> •
     <a href="#building-and-pushing-the-images">Building and Pushing the images</a> •
+    <a href="#test-extensions-with-a-test-image">Test extensions with a test image</a> •
     <a href="#scanning-the-images-for-vulnerabilites">Scanning the images for vulnerabilites</a>
 </p>
 
