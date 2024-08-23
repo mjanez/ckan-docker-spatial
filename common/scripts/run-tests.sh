@@ -12,11 +12,11 @@ done
 shift "$(($OPTIND -1))"
 
 if [ -n "$1" ]; then
-    echo "Running pytest --cov=$1 --ckan-ini=test.ini tests"
+    echo "[ckan-test.run-tests] Running pytest --cov=$1 --ckan-ini=test.ini tests"
     pytest --cov="$1" --ckan-ini=test.ini tests
     test_exit_code=$?
 else
-    echo "Running pytest --ckan-ini=test.ini tests"
+    echo "[ckan-test.run-tests] Running pytest --ckan-ini=test.ini tests"
     pytest --ckan-ini=test.ini tests
     test_exit_code=$?
 fi
