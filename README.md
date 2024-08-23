@@ -29,7 +29,7 @@ The following CKAN versions are available at this repo:
 | 2.9.9 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
 | 2.9.10 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.10` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/32). |
 | 2.9.11 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.11` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
-| 2.10.4 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.3` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
+| 2.10.4 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.4` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
 | 2.10.4 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image. |
 
 > [!NOTE]
@@ -52,6 +52,12 @@ For CKAN 2.9.11 dev images, go to the `ckan-2.9/dev` directory and use the Makef
     make build
     make push
 
+For CKAN 2.9.11 test images, go to the `ckan-2.9/test` directory and use the Makefile included:
+
+    cd ckan-2.9/test
+    make build
+    make push
+
 The CKAN 2.10 base and dev images are available as the dev branches at the moment
 
     cd ckan-2.10/base
@@ -61,6 +67,25 @@ The CKAN 2.10 base and dev images are available as the dev branches at the momen
     cd ckan-2.10/dev
     make build
     make push
+
+
+### Test extensions with a test image
+To test an extension against the CKAN version you want to use, proceed as follows:
+
+1. Clone the repository, i.e. [`ckanext-schemingdcat`](https://github.com/mjanez/ckanext-schemingdcat) and navigate to the directory:
+   ```shell
+   git clone https://github.com/mjanez/ckanext-schemingdcat.git /path/to/your/ckan/extensions/ckanext-schemingdcat
+   cd /path/to/your/ckan/extensions/ckanext-schemingdcat
+
+2. Build the necessary Docker images. This step ensures that all dependencies and configurations are correctly set up.
+   ```shell
+   docker compose build
+   ```
+
+3. After building the images, you can run the tests. The Docker Compose configuration mounts the root of the repository into the CKAN container as a volume. This means that any changes you make to the code will be reflected inside the container without needing to rebuild the image, unless you modify the extension's dependencies.
+   ```shell
+   docker compose up
+   ```
 
 ### Scanning the images for vulnerabilites
 
