@@ -14,12 +14,13 @@ ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.9.11-test
 
 # Install packages needed by test requirements
-RUN apk add --no-cache libffi-dev \
-    netcat-openbsd \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libffi-dev \
+    netcat \
     util-linux \
-    cyrus-sasl-dev \
-    libressl-dev \
-    && rm -rf /var/cache/apk/*
+    libsasl2-dev \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 ## Copy test_ckan.sh
 COPY setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
