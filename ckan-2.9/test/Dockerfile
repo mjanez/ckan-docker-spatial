@@ -35,7 +35,10 @@ RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     mkdir -p ${APP_DIR}/scripts && \
     cp -r /tmp/${REPO_NAME}/common/waits/* ${APP_DIR}/waits/ && \
     cp -r /tmp/${REPO_NAME}/common/scripts/* ${APP_DIR}/scripts/ && \
-    rm -rf /tmp/${REPO_NAME}
+    rm -rf /tmp/${REPO_NAME} && \
+    # Ensure all scripts in waits and scripts directories have execution permissions
+    chmod +x ${APP_DIR}/waits/*.sh && \
+    chmod +x ${APP_DIR}/scripts/*.sh
 
 WORKDIR ${CKAN_DIR}
 
@@ -50,7 +53,7 @@ WORKDIR ${APP_DIR}
 
 # this entrypoint ensures our service dependencies (postgresql, solr and redis) are running before
 # running the cmd
-ENTRYPOINT ["/bin/sh", "$APP_DIR/waits/basic.sh"]
+ENTRYPOINT ["/bin/sh", "-c", "${APP_DIR}/waits/basic.sh"]
 
 # run the tests
-CMD ["/bin/sh", "$APP_DIR/scripts/run-tests.sh"]
+CMD ["/bin/sh", "-c", "${APP_DIR}/scripts/run-tests.sh"]
