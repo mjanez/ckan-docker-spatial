@@ -5,7 +5,7 @@ ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
 ENV CKAN_TEST_INI=${APP_DIR}/test.ini
 ENV NODE_MAJOR_VERSION="18"
-# SH Scripts adapted from Natural History Museum
+# SH Scripts adapted from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.9.11-test
@@ -33,13 +33,16 @@ WORKDIR /tmp
 RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     mkdir -p ${APP_DIR}/waits && \
     mkdir -p ${APP_DIR}/scripts && \
-    cp -r /tmp/${REPO_NAME}/common/waits ${APP_DIR}/waits && \
-    cp -r /tmp/${REPO_NAME}/common/scripts ${APP_DIR}/scripts && \
+    cp -r /tmp/${REPO_NAME}/common/waits/* ${APP_DIR}/waits/ && \
+    cp -r /tmp/${REPO_NAME}/common/scripts/* ${APP_DIR}/scripts/ && \
     rm -rf /tmp/${REPO_NAME}
 
 WORKDIR ${CKAN_DIR}
 
-# Install CKAN dev requirements
+# Update pip to the latest version
+RUN pip3 install --upgrade pip
+
+# Install CKAN test requirements
 RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
     npm install . --only=prod 
 
