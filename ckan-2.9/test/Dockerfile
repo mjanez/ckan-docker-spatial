@@ -4,7 +4,7 @@ ENV APP_DIR=/srv/app
 ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
 ENV CKAN_TEST_INI=${APP_DIR}/test.ini
-ENV NODE_MAJOR_VERSION="15"
+ENV NODE_MAJOR_VERSION="18"
 # SH Scripts adapted from Natural History Museum
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
