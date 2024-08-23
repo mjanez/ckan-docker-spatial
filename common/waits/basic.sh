@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+bash "${BASH_SOURCE%/*}/services/postgresql.sh"
+bash "${BASH_SOURCE%/*}/services/solr.sh"
+bash "${BASH_SOURCE%/*}/services/redis.sh"
+
+echo "Setting DB permissions..."
+export PGPASSWORD=${PGPASSWORD:-"password"}
+ckan -c test.ini datastore set-permissions | psql -h db -U ckan
+echo "Permissions set"
+
+echo "All services up, running command"
+
+exec "$@"

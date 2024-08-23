@@ -44,6 +44,8 @@ jobs:
             echo "DOCKERFILE_PATH=/ckan-master/base" >> $GITHUB_ENV
           elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
             echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/dev" >> $GITHUB_ENV
+          elif [[ "${{ env.BRANCH }}" == *"-test" ]]; then
+            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/test" >> $GITHUB_ENV
           else
             echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/base" >> $GITHUB_ENV
           fi
