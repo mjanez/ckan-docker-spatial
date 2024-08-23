@@ -53,7 +53,7 @@ WORKDIR ${APP_DIR}
 
 # this entrypoint ensures our service dependencies (postgresql, solr and redis) are running before
 # running the cmd
-ENTRYPOINT ["/bin/sh", "-c", "${APP_DIR}/waits/basic.sh"]
+ENTRYPOINT ["/srv/app/waits/basic.sh"]
 
 # run the tests
 CMD ["/bin/sh", "-c", "${APP_DIR}/scripts/run-tests.sh"]
