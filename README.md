@@ -78,12 +78,52 @@ To test an extension against the CKAN version you want to use, proceed as follow
    git clone https://github.com/mjanez/ckanext-schemingdcat.git /path/to/your/ckan/extensions/ckanext-schemingdcat
    cd /path/to/your/ckan/extensions/ckanext-schemingdcat
 
-2. Build the necessary Docker images. This step ensures that all dependencies and configurations are correctly set up.
+2. Check that `docker/Dockerfile` contains all the steps needed for your extension, i.e: 
+    ```dockerfile
+    ENV CKAN_VERSION=2.9
+    ENV APP_DIR=/srv/app
+    ENV CKAN_DIR=${APP_DIR}/src/ckan
+    ENV TZ=UTC
+
+    WORKDIR ${APP_DIR}/src/ckanext-schemingdcat
+
+    # Copy extension files to the container
+    COPY . .
+
+    # Install the base + test dependencies
+    RUN pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/requirements.txt && \
+        # ignore installed packaging required version (fixed pyshacl issues)
+        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/dev-requirements.txt && \
+        pip install -e ${APP_DIR}/src/ckanext-schemingdcat && \
+        # Replace default path to CKAN core config file with the one on the container
+        sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
+
+    WORKDIR ${APP_DIR}
+
+    # Setup other extensions
+    RUN echo "mjanez/ckanext-dcat" && \
+        pip install --no-cache-dir -e git+https://github.com/mjanez/ckanext-dcat.git#egg=ckanext-dcat && \
+        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-dcat/requirements.txt && \
+        echo "ckan/ckanext-harvest" && \
+        pip install --no-cache-dir -e git+https://github.com/ckan/ckanext-harvest.git#egg=ckanext-harvest && \
+        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-harvest/requirements.txt && \
+        echo "ckan/ckanext-scheming" && \
+        pip install --no-cache-dir -e git+https://github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming && \
+        echo "mjanez/ckanext-fluent" && \
+        pip install --no-cache-dir -e git+https://github.com/mjanez/ckanext-fluent.git#egg=ckanext-fluent
+
+    WORKDIR ${APP_DIR}/src/ckanext-schemingdcat
+
+    # Running the tests with coverage output
+    CMD ["/bin/sh", "-c", "$APP_DIR/test_ckan.sh -d ckanext/schemingdcat/tests ckanext.schemingdcat"]
+    ```
+
+3. Now, build the necessary Docker images. This step ensures that all dependencies and configurations are correctly set up.
    ```shell
    docker compose build
    ```
 
-3. After building the images, you can run the tests. The Docker Compose configuration mounts the root of the repository into the CKAN container as a volume. This means that any changes you make to the code will be reflected inside the container without needing to rebuild the image, unless you modify the extension's dependencies.
+4. After building the images, you can run the tests. The Docker Compose configuration mounts the root of the repository into the CKAN container as a volume. This means that any changes you make to the code will be reflected inside the container without needing to rebuild the image, unless you modify the extension's dependencies.
    ```shell
    docker compose up
    ```
