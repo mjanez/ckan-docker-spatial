@@ -14,12 +14,11 @@ ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.9.11-test
 
 # Install packages needed by test requirements
-RUN RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
         # install packages for additional bits and bobs (like the entrypoint script)
         wget \
         git \
         curl \
-        netcat \
         uuid-runtime \
         libffi-dev \
         netcat-openbsd \
@@ -65,9 +64,6 @@ RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
     npm install . --only=prod 
 
 WORKDIR ${APP_DIR}
-
-# Replace default path to CKAN core config file with the one on the container
-RUN sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
 
 # Run the tests
 CMD ["/bin/sh", "-c", "$APP_DIR/test_ckan.sh"]
