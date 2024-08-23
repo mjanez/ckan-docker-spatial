@@ -1,4 +1,4 @@
-# Official CKAN image. https://github.com/ckan/ckan-docker-base
+# Based on official CKAN image. https://github.com/ckan/ckan-docker-base
 FROM ckan/ckan-dev:2.9-py3.9
 
 ENV CKAN_VERSION=2.9
@@ -22,7 +22,7 @@ RUN apk add --no-cache libffi-dev \
     && rm -rf /var/cache/apk/*
 
 ## Copy test_ckan.sh
-COPY docker/setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
+COPY setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
 RUN chmod +x ${APP_DIR}/test_ckan.sh
 
 # Conditionally install pytest-rerunfailures if CKAN version is 2.9
@@ -38,7 +38,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y --no-install-recommends nodejs \
     && npm update -g npm \
     && rm -rf /var/lib/apt/lists/*
-
 
 # Clone the repository and copy the required folders for nhm custom scripts
 WORKDIR /tmp
@@ -66,5 +65,5 @@ WORKDIR ${APP_DIR}
 # Replace default path to CKAN core config file with the one on the container
 RUN sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
 
-# Running the tests with coverage output
+# Run the tests
 CMD ["/bin/sh", "-c", "$APP_DIR/test_ckan.sh"]
