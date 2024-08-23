@@ -1,5 +1,4 @@
-# Official CKAN image. https://github.com/ckan/ckan-docker-base
-FROM ckan/ckan-dev:2.9-py3.9
+FROM ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.11
 
 ENV CKAN_VERSION=2.9
 ENV APP_DIR=/srv/app
@@ -7,8 +6,7 @@ ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
 ENV CKAN_TEST_INI=${APP_DIR}/test.ini
 ENV NODE_MAJOR_VERSION="18"
-ENV TZ=UTC
-# Custom scripts from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
+# SH Scripts adapted from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.9.11-test
@@ -21,24 +19,15 @@ RUN apk add --no-cache libffi-dev \
     libressl-dev \
     && rm -rf /var/cache/apk/*
 
-## Copy test_ckan.sh
-COPY docker/setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
-RUN chmod +x ${APP_DIR}/test_ckan.sh
-
-# Conditionally install pytest-rerunfailures if CKAN version is 2.9
-RUN if [ "$CKAN_VERSION" = "2.9" ]; then \
-        pip install -U pytest-rerunfailures; \
-    fi
-
 # Install NodeJS
 WORKDIR /usr/local
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && curl -fsSL https://deb.nodesource.com/setup_${NODE_MAJOR_VERSION}.x | bash - \
-    && apt-get install -y --no-install-recommends nodejs \
-    && npm update -g npm \
-    && rm -rf /var/lib/apt/lists/*
-
+RUN NODE_VERSION=$(wget --progress=dot:giga -qO- https://unofficial-builds.nodejs.org/download/release/index.tab | grep -E "^v${NODE_MAJOR_VERSION}\." | head -n 1 | cut -f 1) && \
+    wget --progress=dot:giga "https://unofficial-builds.nodejs.org/download/release/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64-musl.tar.xz" && \
+    tar -xJf node-${NODE_VERSION}-linux-x64-musl.tar.xz && \
+    mv node-${NODE_VERSION}-linux-x64-musl /usr/local/node && \
+    ln -s /usr/local/node/bin/node /usr/local/bin/node && \
+    ln -s /usr/local/node/bin/npm /usr/local/bin/npm && \
+    npm update -g npm
 
 # Clone the repository and copy the required folders for nhm custom scripts
 WORKDIR /tmp
@@ -52,10 +41,10 @@ RUN git clone --branch ${REPO_BRANCH} ${REPO_URL} /tmp/${REPO_NAME} && \
     chmod +x ${APP_DIR}/waits/*.sh && \
     chmod +x ${APP_DIR}/scripts/*.sh
 
+WORKDIR ${CKAN_DIR}
+
 # Update pip to the latest version
 RUN pip3 install --upgrade pip
-
-WORKDIR ${CKAN_DIR}
 
 # Install CKAN test requirements
 RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
@@ -63,8 +52,6 @@ RUN pip3 install --no-cache-dir -r dev-requirements.txt && \
 
 WORKDIR ${APP_DIR}
 
-# Replace default path to CKAN core config file with the one on the container
-RUN sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
-
-# Running the tests with coverage output
-CMD ["/bin/sh", "-c", "$APP_DIR/test_ckan.sh"]
+# this entrypoint ensures our service dependencies (postgresql, solr and redis) are running before
+# running the tests
+CMD ["/bin/sh", "-c", "${APP_DIR}/waits/basic.sh"]
