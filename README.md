@@ -68,6 +68,25 @@ The CKAN 2.10 base and dev images are available as the dev branches at the momen
     make build
     make push
 
+
+### Test extensions with a test image
+To test an extension against the CKAN version you want to use, proceed as follows:
+
+1. Clone the repository, i.e. [`ckanext-schemingdcat`](https://github.com/mjanez/ckanext-schemingdcat) and navigate to the directory:
+   ```shell
+   git clone https://github.com/mjanez/ckanext-schemingdcat.git /path/to/your/ckan/extensions/ckanext-schemingdcat
+   cd /path/to/your/ckan/extensions/ckanext-schemingdcat
+
+2. Build the necessary Docker images. This step ensures that all dependencies and configurations are correctly set up.
+   ```shell
+   docker compose build
+   ```
+
+3. After building the images, you can run the tests. The Docker Compose configuration mounts the root of the repository into the CKAN container as a volume. This means that any changes you make to the code will be reflected inside the container without needing to rebuild the image, unless you modify the extension's dependencies.
+   ```shell
+   docker compose up
+   ```
+
 ### Scanning the images for vulnerabilites
 
 Using [Snyk Advisor](https://docs.docker.com/develop/scan-images/) via [Github Actions](https://github.com/snyk/actions).
