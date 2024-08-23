@@ -52,6 +52,12 @@ For CKAN 2.9.11 dev images, go to the `ckan-2.9/dev` directory and use the Makef
     make build
     make push
 
+For CKAN 2.9.11 test images, go to the `ckan-2.9/test` directory and use the Makefile included:
+
+    cd ckan-2.9/test
+    make build
+    make push
+
 The CKAN 2.10 base and dev images are available as the dev branches at the moment
 
     cd ckan-2.10/base

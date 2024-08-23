@@ -8,7 +8,7 @@ ENV NODE_MAJOR_VERSION="15"
 # SH Scripts adapted from Natural History Museum
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
-ARG REPO_BRANCH=ckan-2.9.11
+ARG REPO_BRANCH=ckan-2.9.11-test
 
 # Install packages needed by test requirements
 RUN apk add --no-cache libffi-dev \
