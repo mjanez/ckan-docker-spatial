@@ -1,4 +1,4 @@
-name: Build and release image manually
+name: Build and release images manually
 
 on: workflow_dispatch
 
@@ -6,7 +6,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mjanez/ckan-base-spatial
   CONTEXT: .
-  BRANCH: ${{ github.head_ref }}
+  BRANCH: ${{ github.ref_name }}
+  DOCKERFILE_PATH: /ckan
   DOCKERFILE: Dockerfile
 
 jobs:
