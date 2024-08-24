@@ -61,7 +61,8 @@ WORKDIR ${CKAN_DIR}
 
 # Install CKAN test requirements
 RUN pip3  install --no-cache-dir -r dev-requirements.txt && \
-    npm install . --only=prod 
+    npm install && \
+    npm install gulp
 
 WORKDIR ${APP_DIR}
 
