@@ -6,6 +6,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mjanez/ckan-base-spatial
   CONTEXT: .
+  BRANCH: ${{ github.head_ref }}
+  DOCKERFILE: Dockerfile
 
 jobs:
   build_and_push_base:
@@ -23,7 +25,7 @@ jobs:
       - name: Extract CKAN_VERSION from base Dockerfile
         id: extract_version
         run: |
-          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./base/Dockerfile)
+          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./${{ env.BRANCH }}/base/${{ env.DOCKERFILE }})
           echo "CKAN_VERSION=${CKAN_VERSION}" >> $GITHUB_ENV
 
       - name: Login to registry
@@ -48,13 +50,13 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
-          context: ${{ env.CONTEXT }}/base
-          file: ${{ env.CONTEXT }}/base/Dockerfile
+          context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base
+          file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.DOCKERFILE }}
 
       - name: Linting Dockerfile with hadolint in GH Actions
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ${{ env.CONTEXT }}/base/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.DOCKERFILE }}
           no-fail: true
 
       - name: Run Trivy container image vulnerability scanner
@@ -90,13 +92,13 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-dev
           labels: ${{ steps.meta.outputs.labels }}
-          context: ${{ env.CONTEXT }}/dev
-          file: ${{ env.CONTEXT }}/dev/Dockerfile
+          context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev
+          file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
 
       - name: Linting Dockerfile with hadolint in GH Actions
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ${{ env.CONTEXT }}/dev/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
           no-fail: true
 
       - name: Run Trivy container image vulnerability scanner
@@ -132,13 +134,13 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-test
           labels: ${{ steps.meta.outputs.labels }}
-          context: ${{ env.CONTEXT }}/test
-          file: ${{ env.CONTEXT }}/test/Dockerfile
+          context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test
+          file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/${{ env.DOCKERFILE }}
 
       - name: Linting Dockerfile with hadolint in GH Actions
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ${{ env.CONTEXT }}/test/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/${{ env.DOCKERFILE }}
           no-fail: true
 
       - name: Run Trivy container image vulnerability scanner
