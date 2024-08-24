@@ -9,7 +9,9 @@ ENV CKAN_INI=${APP_DIR}/ckan.ini
 ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
 # CKAN backports repository for >2.9.11 releases
-ENV GIT_URL=https://github.com/derilinx/ckan-backports.git
+ENV GIT_ORG=derilinx
+ENV GIT_REPO=ckan-backports
+ENV GIT_URL=https://github.com/${GIT_ORG}/${GIT_REPO}.git
 # CKAN version to build
 ENV GIT_BRANCH=${CKAN_VERSION}
 # Customize these on the .env file if needed
@@ -56,7 +58,7 @@ RUN apk add --no-cache git \
         g++ \
         autoconf \
         automake \
-    	libtool \
+        libtool \
         python3-dev \
         libxml2-dev \
         libxslt-dev \
@@ -130,7 +132,7 @@ RUN mkdir -p ${CKAN_STORAGE_PATH} && \
 
 COPY setup/prerun.py ${APP_DIR}
 COPY setup/start_ckan.sh ${APP_DIR}
-ADD https://raw.githubusercontent.com/ckan/ckan/${GIT_BRANCH}/wsgi.py ${APP_DIR}
+ADD https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}/wsgi.py ${APP_DIR}
 RUN chmod 644 ${APP_DIR}/wsgi.py
 
 # Create entrypoint directory for children image scripts
