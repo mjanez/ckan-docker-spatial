@@ -1,5 +1,5 @@
 # Based on official CKAN image. https://github.com/ckan/ckan-docker-base
-FROM ckan/ckan-dev:2.10-py3.9
+FROM ckan/ckan-base:2.10.5-py3.10
 
 ENV CKAN_VERSION=2.10
 ENV APP_DIR=/srv/app
@@ -11,7 +11,7 @@ ENV TZ=UTC
 # Custom scripts adapted from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
-ARG REPO_BRANCH=ckan-2.9.11
+ARG REPO_BRANCH=ckan-2.10.5-test
 
 # Install packages needed by test requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
