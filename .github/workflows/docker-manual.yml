@@ -5,17 +5,11 @@ on: workflow_dispatch
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mjanez/ckan-base-spatial
-  TAG: ghcr.io/mjanez/ckan-base-spatial:${{ github.ref_name }}
   CONTEXT: .
-  BRANCH: ${{ github.ref_name }}
-  DOCKERFILE_PATH: /ckan
-  DOCKERFILE: Dockerfile
 
 jobs:
-  docker:
-    name: manual/build-docker-push:${{ github.ref_name }}
+  build_and_push_base:
     runs-on: ubuntu-latest
-
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -26,16 +20,11 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set DOCKERFILE_PATH
+      - name: Extract CKAN_VERSION from base Dockerfile
+        id: extract_version
         run: |
-          BRANCH_TRIMMED=$(echo ${{ env.BRANCH }} | sed -n -e 's/^ckan-\([0-9]*\.[0-9]*\).*$/\1/p')
-          if [[ "${{ env.BRANCH }}" == "master" ]]; then
-            echo "DOCKERFILE_PATH=/ckan-master/base" >> $GITHUB_ENV
-          elif [[ "${{ env.BRANCH }}" == *"-dev" ]]; then
-            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/dev" >> $GITHUB_ENV
-          else
-            echo "DOCKERFILE_PATH=/ckan-${BRANCH_TRIMMED}/base" >> $GITHUB_ENV
-          fi
+          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./base/Dockerfile)
+          echo "CKAN_VERSION=${CKAN_VERSION}" >> $GITHUB_ENV
 
       - name: Login to registry
         uses: docker/login-action@v3
@@ -53,30 +42,114 @@ jobs:
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}/blob/${{ env.BRANCH }}/README.md
             org.opencontainers.image.version=${{ env.BRANCH }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v5
+      - name: Build and push base image
+        uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.TAG }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
-          context: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}
-          file: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }}
+          context: ${{ env.CONTEXT }}/base
+          file: ${{ env.CONTEXT }}/base/Dockerfile
 
       - name: Linting Dockerfile with hadolint in GH Actions
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: ${{ env.CONTEXT }}${{ env.DOCKERFILE_PATH }}/${{ env.DOCKERFILE }}
+          dockerfile: ${{ env.CONTEXT }}/base/Dockerfile
           no-fail: true
 
       - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.18.0
+        uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BRANCH }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}
           format: sarif
-          output: trivy-results.sarif
-  
+          output: trivy-results-base.sarif
+
       - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
-          sarif_file: trivy-results.sarif
+          sarif_file: trivy-results-base.sarif
+
+  build_and_push_dev:
+    runs-on: ubuntu-latest
+    needs: build_and_push_base
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push dev image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-dev
+          labels: ${{ steps.meta.outputs.labels }}
+          context: ${{ env.CONTEXT }}/dev
+          file: ${{ env.CONTEXT }}/dev/Dockerfile
+
+      - name: Linting Dockerfile with hadolint in GH Actions
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ env.CONTEXT }}/dev/Dockerfile
+          no-fail: true
+
+      - name: Run Trivy container image vulnerability scanner
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-dev
+          format: sarif
+          output: trivy-results-dev.sarif
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results-dev.sarif
+
+  build_and_push_test:
+    runs-on: ubuntu-latest
+    needs: build_and_push_dev
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Login to registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push test image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-test
+          labels: ${{ steps.meta.outputs.labels }}
+          context: ${{ env.CONTEXT }}/test
+          file: ${{ env.CONTEXT }}/test/Dockerfile
+
+      - name: Linting Dockerfile with hadolint in GH Actions
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: ${{ env.CONTEXT }}/test/Dockerfile
+          no-fail: true
+
+      - name: Run Trivy container image vulnerability scanner
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.CKAN_VERSION }}-test
+          format: sarif
+          output: trivy-results-test.sarif
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: trivy-results-test.sarif
