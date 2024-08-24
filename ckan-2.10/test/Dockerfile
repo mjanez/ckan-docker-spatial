@@ -8,10 +8,10 @@ ENV CKAN_DIR=${SRC_DIR}/ckan
 ENV CKAN_TEST_INI=${APP_DIR}/test.ini
 ENV NODE_VERSION="18"
 ENV TZ=UTC
-# Custom scripts from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
+# Custom scripts adapted from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
-ARG REPO_BRANCH=ckan-2.9.11-test
+ARG REPO_BRANCH=ckan-2.9.11
 
 # Install packages needed by test requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
