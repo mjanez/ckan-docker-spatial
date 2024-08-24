@@ -1,5 +1,5 @@
 FROM alpine:3.15
-ARG CKAN_VERSION=ckan-2.9.11
+ARG CKAN_VERSION=ckan-2.9.12
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC
@@ -8,7 +8,8 @@ ENV SRC_DIR=/srv/app/src
 ENV CKAN_INI=${APP_DIR}/ckan.ini
 ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
-ENV GIT_URL=https://github.com/ckan/ckan.git
+# CKAN backports repository for >2.9.11 releases
+ENV GIT_URL=https://github.com/derilinx/ckan-backports.git
 # CKAN version to build
 ENV GIT_BRANCH=${CKAN_VERSION}
 # Customize these on the .env file if needed

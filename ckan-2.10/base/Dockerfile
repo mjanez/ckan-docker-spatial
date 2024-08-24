@@ -41,7 +41,8 @@ RUN apk add --no-cache git \
     uwsgi-http \
     uwsgi-corerouter \
     uwsgi-python \
-    py3-gevent \
+    # Remove py3-gevent. # CKAN install a newer version of needed packages. ckan/ckan:2.10.5: https://github.com/ckan/ckan/commit/b6d88dba0483eac68d43c6adcb2521f6d6f1bacb
+    #py3-gevent \
     uwsgi-gevent \
     libmagic \
     curl \
