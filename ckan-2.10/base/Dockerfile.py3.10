@@ -1,5 +1,6 @@
 FROM python:3.10-slim-bookworm
 
+# Neccesary for the build. Github Actions
 ARG CKAN_VERSION=ckan-2.10.5
 
 # Internals, you probably don't need to change these
@@ -59,7 +60,9 @@ RUN echo ${TZ} > /etc/timezone && \
     apt-get install --no-install-recommends -y \
     supervisor && \
     mkdir /etc/supervisord.d && \
-    apt-get clean
+    # Clean system cache and lists
+    apt-get -q clean && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY setup/supervisord.conf /etc
 

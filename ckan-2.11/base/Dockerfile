@@ -1,6 +1,7 @@
 FROM python:3.10-slim-bookworm
 
-ARG CKAN_VERSION=master
+# Neccesary for the build. Github Actions
+ARG CKAN_VERSION=ckan-2.11.0
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC
@@ -14,7 +15,7 @@ ENV GIT_URL=https://github.com/ckan/ckan.git
 ENV CKAN_VERSION=${CKAN_VERSION}
 # Customize these in the environment (.env) file if needed
 ENV CKAN_SITE_URL=http://localhost:5000
-ENV CKAN__PLUGINS="image_view text_view recline_view datastore envvars"
+ENV CKAN__PLUGINS="image_view text_view datatables_view datastore envvars"
 
 # UWSGI options
 ENV UWSGI_HARAKIRI=50
@@ -57,7 +58,7 @@ RUN echo ${TZ} > /etc/timezone && \
     mkdir -p ${SRC_DIR} && \
     # Install supervisord and create the supervisord.d directory
     apt-get install --no-install-recommends -y \
-    supervisor && \
+        supervisor && \
     mkdir /etc/supervisord.d && \
     # Clean system cache and lists
     apt-get -q clean && \
@@ -77,7 +78,7 @@ RUN pip3 install --no-cache-dir -U pip && \
     pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
     # Create and update CKAN config
     ckan generate config ${CKAN_INI} && \
-    ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
+    ckan config-tool ${CKAN_INI} "SECRET_KEY = " && \
     ckan config-tool ${CKAN_INI} "ckan.plugins = ${CKAN__PLUGINS}"
 
 # Create a local user and group plus set up the storage path

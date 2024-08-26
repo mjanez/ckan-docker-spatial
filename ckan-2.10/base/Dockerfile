@@ -1,5 +1,6 @@
 FROM alpine:3.17
 
+# Neccesary for the build. Github Actions
 ARG CKAN_VERSION=ckan-2.10.5
 
 # Internals, you probably don't need to change these

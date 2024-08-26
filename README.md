@@ -21,20 +21,27 @@ Contains [CKAN spatial images](https://github.com/mjanez/ckan-docker-spatial/pkg
 
 # Pre-configured CKAN Docker images
 
-The images will usually be used as a Docker Compose install in conjunction with other Docker images that make up the CKAN platform. 
+The images will usually be used as a Docker Compose install in conjunction with other Docker images that make up the CKAN platform. The official CKAN Docker install is located here: [ckan-docker](https://github.com/ckan/ckan-docker)
 
-The following CKAN versions are available at this repo:
+The following CKAN versions are available in base or dev forms. They are distinguished from one another using different Docker image tags:
 
-| CKAN Version | Type | Docker tag | Notes |
-| --- | --- | --- | --- |
-| 2.9.9 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.9` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/13). |
-| 2.9.10 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.10` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/32). |
-| 2.9.11 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.11` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
-| 2.9.12 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.9.12` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
-| 2.10.4 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.4` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
-| 2.10.4 | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image. |
-| 2.10.5 | custom image | `ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.5` | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. [Changelog](https://github.com/mjanez/ckan-docker-spatial/pull/66). |
-| master | latest custom image | `ghcr.io/mjanez/ckan-base-spatial:master` | Latest `ckan-base-spatial` image from [`ckan/ckan:master`](https://github.com/ckan/ckan), do not use in production|
+| CKAN Version | Type |  Base image | Docker tag | Notes |
+| --- | --- | --- | --- | --- |
+| 2.9.x  | base image | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-base:2.9.12`, `ghcr.io/mjanez/ckan-spatial-base:2.9`                | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. Also avalaible latest official `2.9.11` and latest security backport: `2.9.12` |
+| 2.9.x  | dev image  | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-dev:2.9.12`, `ghcr.io/mjanez/ckan-spatial-dev:2.9`                  | ... |
+| 2.9.x  | base image | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-base:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-base:2.9.12-py3.9`    | ... |
+| 2.9.x  | dev image  | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-dev:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-dev:2.9.12-py3.9`      | ... |
+| 2.10.x | base image | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-base:2.10.5`, `ghcr.io/mjanez/ckan-spatial-base:2.10`               | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
+| 2.10.x | dev image  | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-dev:2.10.5`, `ghcr.io/mjanez/ckan-spatial-dev:2.10`                 | ... |
+| 2.10.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.10.5-py3.10` | ... |
+| 2.10.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.10.5-py3.10`   | ... |
+| 2.11.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.11`, `ghcr.io/mjanez/ckan-spatial-base:2.11.0`, `ghcr.io/mjanez/ckan-spatial-base:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.11.0-py3.10`          | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. `>= ckan-2.9.11` Python images only. |
+| 2.11.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.11`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.0`, `ghcr.io/mjanez/ckan-spatial-dev:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.0-py3.10`            | ... |
+| master | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:master`, `ghcr.io/mjanez/ckan-spatial-base:master-py3.10`      | Latest `ckan-spatial-base` image from [`ckan/ckan:master`](https://github.com/ckan/ckan), do not use in production |
+| master | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:master`, `ghcr.io/mjanez/ckan-spatial-dev:master-py3.10`        | ... |
+
+
+Older CKAN versions might be available as [image tags](https://github.com/mjanez/ckan-docker-spatial/pkgs/container/ckan-base-spatial) but note that these are not supported as per [CKAN's release policy](https://docs.ckan.org/en/latest/maintaining/releases.html#supported-versions).
 
 > [!NOTE]
 >The custom CKAN Docker installation (with spatial extensions) can be found here: [`mjanez/ckan-docker`](https://github.com/mjanez/ckan-docker)
@@ -65,12 +72,16 @@ For CKAN 2.9.12 test images, go to the `ckan-2.9/test` directory and use the Mak
 The CKAN 2.10 base and dev images are available as the dev branches at the moment
 
     cd ckan-2.10/base
-    make build
-    make push
+    make build (can then use locally)
+    make push (if you have enough credentials)
+
+
+For CKAN 2.10 dev images, go to the `ckan-2.10/dev` directory and use the Makefile included:
+
 
     cd ckan-2.10/dev
-    make build
-    make push
+    make build (can then use locally)
+    make push (if you have enough credentials)
 
 
 ### Test extensions with a test image
@@ -83,21 +94,33 @@ To test an extension against the CKAN version you want to use, proceed as follow
 
 2. Check that `docker/Dockerfile` contains all the steps needed for your extension, i.e: 
     ```dockerfile
-    ENV CKAN_VERSION=2.9
+    FROM ghcr.io/mjanez/ckan-spatial-test:2.10.5
+
+    ENV CKAN_VERSION_MAYOR=ckan-2.9
     ENV APP_DIR=/srv/app
     ENV CKAN_DIR=${APP_DIR}/src/ckan
     ENV TZ=UTC
 
     WORKDIR ${APP_DIR}/src/ckanext-schemingdcat
 
+    # Conditionally install pytest-rerunfailures if CKAN version is 2.9
+    RUN if [ "$CKAN_VERSION_MAYOR" = "2.9" ]; then \
+            pip3  install -U pytest-rerunfailures; \
+        fi
+
     # Copy extension files to the container
     COPY . .
 
+    # ## Override test_ckan.sh
+    # - Make sure to put the docker/setup/test_ckan.sh.override path because of the COPY context 
+    # COPY docker/setup/test_ckan.sh.override ${APP_DIR}/test_ckan.sh
+    # RUN chmod +x ${APP_DIR}/test_ckan.sh
+
     # Install the base + test dependencies
-    RUN pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/requirements.txt && \
+    RUN pip3  install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/requirements.txt && \
         # ignore installed packaging required version (fixed pyshacl issues)
-        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/dev-requirements.txt && \
-        pip install -e ${APP_DIR}/src/ckanext-schemingdcat && \
+        pip3  install --no-cache-dir -r ${APP_DIR}/src/ckanext-schemingdcat/dev-requirements.txt && \
+        pip3  install -e ${APP_DIR}/src/ckanext-schemingdcat && \
         # Replace default path to CKAN core config file with the one on the container
         sed -i -e 's/use = config:.*/use = config:\/srv\/app\/src\/ckan\/test-core.ini/' test.ini
 
@@ -105,15 +128,15 @@ To test an extension against the CKAN version you want to use, proceed as follow
 
     # Setup other extensions
     RUN echo "mjanez/ckanext-dcat" && \
-        pip install --no-cache-dir -e git+https://github.com/mjanez/ckanext-dcat.git#egg=ckanext-dcat && \
-        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-dcat/requirements.txt && \
+        pip3  install --no-cache-dir -e git+https://github.com/mjanez/ckanext-dcat.git#egg=ckanext-dcat && \
+        pip3  install --no-cache-dir -r ${APP_DIR}/src/ckanext-dcat/requirements.txt && \
         echo "ckan/ckanext-harvest" && \
-        pip install --no-cache-dir -e git+https://github.com/ckan/ckanext-harvest.git#egg=ckanext-harvest && \
-        pip install --no-cache-dir -r ${APP_DIR}/src/ckanext-harvest/requirements.txt && \
+        pip3  install --no-cache-dir -e git+https://github.com/ckan/ckanext-harvest.git#egg=ckanext-harvest && \
+        pip3  install --no-cache-dir -r ${APP_DIR}/src/ckanext-harvest/requirements.txt && \
         echo "ckan/ckanext-scheming" && \
-        pip install --no-cache-dir -e git+https://github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming && \
+        pip3  install --no-cache-dir -e git+https://github.com/ckan/ckanext-scheming.git#egg=ckanext-scheming && \
         echo "mjanez/ckanext-fluent" && \
-        pip install --no-cache-dir -e git+https://github.com/mjanez/ckanext-fluent.git#egg=ckanext-fluent
+        pip3  install --no-cache-dir -e git+https://github.com/mjanez/ckanext-fluent.git#egg=ckanext-fluent
 
     WORKDIR ${APP_DIR}/src/ckanext-schemingdcat
 

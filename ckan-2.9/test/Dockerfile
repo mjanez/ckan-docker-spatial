@@ -23,9 +23,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         netcat-openbsd \
         util-linux \
         libsasl2-dev \
-        libssl-dev \
-    && apt-get -q clean \
-    && rm -rf /var/lib/apt/lists/*
+        libssl-dev && \
+        # Clean system cache and lists
+        apt-get -q clean && \
+        rm -rf /var/lib/apt/lists/*
 
 ## Copy test_ckan.sh
 COPY setup/test_ckan.sh ${APP_DIR}/test_ckan.sh

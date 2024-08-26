@@ -1,6 +1,6 @@
-FROM ghcr.io/mjanez/ckan-spatial-dev:2.10.5-py3.10
+FROM ghcr.io/mjanez/ckan-spatial-dev:2.11.0
 
-ENV CKAN_VERSION_MAYOR=2.10
+ENV CKAN_VERSION_MAYOR=2.11
 ENV APP_DIR=/srv/app
 ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
@@ -10,7 +10,7 @@ ENV TZ=UTC
 # Custom scripts adapted from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
-ARG REPO_BRANCH=ckan-2.10
+ARG REPO_BRANCH=ckan-2.11
 
 # Install packages needed by test requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
