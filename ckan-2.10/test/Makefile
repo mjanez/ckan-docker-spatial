@@ -3,8 +3,8 @@ SHELL := /bin/bash
 CKAN_VERSION=2.10.5
 CKAN_VERSION_MAJOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f1)
 CKAN_VERSION_MINOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f2)
-TAG_NAME="mjanez/ckan-base-spatial:ckan-$(CKAN_VERSION)-test"
-ALT_TAG_NAME="mjanez/ckan-base-spatial:ckan-$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)-test"
+TAG_NAME="mjanez/ckan-spatial-test:ckan-$(CKAN_VERSION)"
+ALT_TAG_NAME="mjanez/ckan-spatial-test:ckan-$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
 
 all: help
 help:
