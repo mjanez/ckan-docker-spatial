@@ -48,8 +48,8 @@ jobs:
               echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
             else
               BRANCH_VERSION=$(echo "${{ env.BRANCH }}" | sed 's/ckan-//')
-              if [[ $(echo "$BRANCH_VERSION > 2.11" | bc -l) -eq 1 ]]; then
-                echo "No Dockerfile.py3.* found for branch version > 2.11. Exiting successfully."
+              if [[ $(echo "$BRANCH_VERSION >= 2.11" | bc -l) -eq 1 ]]; then
+                echo "No Dockerfile.py3.* found for branch version >= 2.11. Exiting successfully."
                 exit 0
               else
                 echo "No Dockerfile.py3.* found. Exiting."
@@ -146,8 +146,8 @@ jobs:
               echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
             else
               BRANCH_VERSION=$(echo "${{ env.BRANCH }}" | sed 's/ckan-//')
-              if [[ $(echo "$BRANCH_VERSION > 2.11" | bc -l) -eq 1 ]]; then
-                echo "No Dockerfile.py3.* found for branch version > 2.11. Exiting successfully."
+              if [[ $(echo "$BRANCH_VERSION >= 2.11" | bc -l) -eq 1 ]]; then
+                echo "No Dockerfile.py3.* found for branch version >= 2.11. Exiting successfully."
                 exit 0
               else
                 echo "No Dockerfile.py3.* found. Exiting."
