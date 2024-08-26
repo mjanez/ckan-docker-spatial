@@ -5,8 +5,10 @@ PYTHON_VERSION=3.9
 PYTHON.DOCKERFILE=Dockerfile.py$(PYTHON_VERSION)
 CKAN_VERSION_MAJOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f1)
 CKAN_VERSION_MINOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f2)
-TAG_NAME="ckan/ckan-dev:$(CKAN_VERSION)"
-ALT_TAG_NAME="ckan/ckan-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
+TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION)"
+ALT_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
+PYTHON_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION)-py$(PYTHON_VERSION)"
+PYTHON_ALT_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)-py$(PYTHON_VERSION)"
 
 all: help
 help:
@@ -22,5 +24,7 @@ push: ## Push a CKAN 2.x-dev image to the DockerHub registry, `make push`
 	docker push $(TAG_NAME)
 	echo "Pushing $(ALT_TAG_NAME) image"
 	docker push $(ALT_TAG_NAME)
-
-
+	echo "Pushing $(PYTHON_TAG_NAME) image"
+	docker push $(PYTHON_TAG_NAME)
+	echo "Pushing $(PYTHON_ALT_TAG_NAME) image"
+	docker push $(PYTHON_ALT_TAG_NAME)
