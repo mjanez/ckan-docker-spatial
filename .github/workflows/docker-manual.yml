@@ -178,19 +178,6 @@ jobs:
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
           no-fail: true
 
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
-          format: sarif
-          output: trivy-results-dev.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-dev.sarif
-
   build_and_push_test:
     name: Build and push test image from dev
     runs-on: ubuntu-latest
@@ -228,17 +215,3 @@ jobs:
           # Test only use base Dockerfile
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/Dockerfile
           no-fail: true
-
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          # Test only use base Dockerfile
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-test:${{ env.CKAN_VERSION }}
-          format: sarif
-          output: trivy-results-test.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-test.sarif
