@@ -35,7 +35,8 @@ jobs:
         run: |
           if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
           else
             echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
           fi
@@ -70,8 +71,9 @@ jobs:
         id: determine_dockerfile
         run: |
           if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
-            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/dev -name "Dockerfile.py3.*" | head -n 1)
-            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
+            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
           else
             echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
           fi
