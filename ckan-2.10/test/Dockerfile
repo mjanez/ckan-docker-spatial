@@ -1,6 +1,6 @@
 FROM ghcr.io/mjanez/ckan-spatial-dev:2.10.5-py3.10
 
-ENV CKAN_VERSION=2.10
+ENV CKAN_VERSION_MAYOR=2.10
 ENV APP_DIR=/srv/app
 ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
@@ -32,7 +32,7 @@ COPY setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
 RUN chmod +x ${APP_DIR}/test_ckan.sh
 
 # Conditionally install pytest-rerunfailures if CKAN version is 2.9
-RUN if [ "$CKAN_VERSION" = "2.9" ]; then \
+RUN if [ "$CKAN_VERSION_MAYOR" = "2.9" ]; then \
         pip3  install -U pytest-rerunfailures; \
     fi
 
