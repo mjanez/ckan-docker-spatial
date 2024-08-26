@@ -71,7 +71,6 @@ RUN pip3 install --no-cache-dir -U pip && \
     cd ${SRC_DIR} && \
     pip3 install --no-cache-dir -e git+${GIT_URL}@${CKAN_VERSION}#egg=ckan && \
     cd ckan && \
-    cp who.ini ${APP_DIR} && \
     pip3 install --no-cache-dir --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
