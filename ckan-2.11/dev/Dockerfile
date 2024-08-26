@@ -5,8 +5,11 @@ ENV SRC_EXTENSIONS_DIR=${APP_DIR}/src_extensions
 
 # Install CKAN dev requirements
 #RUN . ${APP_DIR}/bin/activate && \
-RUN cd ${SRC_DIR}/ckan && \ 
-pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/dev-requirements.txt
+WORKDIR ${SRC_DIR}/ckan
+RUN pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/dev-requirements.txt
+
+WORKDIR ${APP_DIR}
+
 
 # Create folder for local extensions sources
 RUN mkdir -p ${SRC_EXTENSIONS_DIR}
