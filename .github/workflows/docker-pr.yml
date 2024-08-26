@@ -58,7 +58,7 @@ jobs:
           error_level: -1
 
       - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
-        if: ${{ env.PYTHON_DOCKERFILE_FOUND }} == 'true'
+        if: env.PYTHON_DOCKERFILE_FOUND == 'true'
         id: python_hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
@@ -66,6 +66,7 @@ jobs:
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
+        continue-on-error: true
 
   build_and_push_dev:
     name: runner/test-ckan-spatial-dev-pr:${{ github.head_ref }}.*
@@ -102,14 +103,15 @@ jobs:
           error_level: -1
 
       - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
-        if: ${{ env.PYTHON_DOCKERFILE_FOUND }} == 'true'
+        if: env.PYTHON_DOCKERFILE_FOUND == 'true'
         id: python_hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.PYTHON_DOCKERFILE }}
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.PYTHON_DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
+        continue-on-error: true
 
   build_and_push_test:
     name: runner/test-ckan-spatial-test-pr:${{ github.head_ref }}.*
