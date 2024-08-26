@@ -1,13 +1,12 @@
-FROM ghcr.io/mjanez/ckan-spatial-base:2.10.5-py3.10
+FROM ckan/ckan-base:2.11.0
+
+# Tag passed through via the Makefile
+ARG CKAN_VERSION=${CKAN_VERSION}
 
 ENV APP_DIR=/srv/app
 ENV SRC_EXTENSIONS_DIR=${APP_DIR}/src_extensions
-ENV SRC_EXTENSIONS_DIR=${APP_DIR}/src_extensions
 
 # Install CKAN dev requirements
-#RUN . ${APP_DIR}/bin/activate && \
-RUN cd ${SRC_DIR}/ckan && \ 
-pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/dev-requirements.txt
 #RUN . ${APP_DIR}/bin/activate && \
 RUN cd ${SRC_DIR}/ckan && \ 
 pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/dev-requirements.txt

@@ -39,6 +39,7 @@ RUN apk add --no-cache git \
         postgresql-client \
         python3 \
         py3-pip \
+        py3-pip \
         libxml2 \
         libxslt \
         musl-dev \
@@ -90,6 +91,7 @@ RUN apk add --no-cache git \
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
     pip3 install "webassets==0.12.1" && \
+    pip3 install "webassets==0.12.1" && \
     curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
     python3 ${SRC_DIR}/get-pip.py && \
     pip3 install --no-cache-dir supervisor && \
@@ -106,9 +108,6 @@ RUN pip3 install --no-cache-dir setuptools && \
     pip3 install --no-cache-dir -e git+${GIT_URL}@${CKAN_VERSION}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    # Workaround, can be removed when 2.10.2 is released
-    # https://github.com/ckan/ckan/pull/7864
-    #sed -i 's/pyyaml==6.0/pyyaml==6.0.1/' requirements.txt && \
     # begin workaround
     pip3 install --no-cache-dir "cython<3.0.0" && \
     pip3 install --no-cache-dir "pyyaml==5.4.1" --no-build-isolation && \
