@@ -1,4 +1,4 @@
-name: Build and push Alpine ckan-spatial images (legacy)
+name: Build and push Debian based >=2.11 & <2.11 Alpine (legacy) ckan-spatial images
 
 on:
   pull_request:
@@ -17,6 +17,7 @@ env:
   IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
   BRANCH: ${{ github.head_ref }}
+  # Use base Dockerfile for all images
   DOCKERFILE: Dockerfile
 
 jobs:
@@ -36,17 +37,6 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Determine Dockerfile
-        id: determine_dockerfile
-        run: |
-          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
-            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
-          else
-            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
-          fi
 
       - name: Extract CKAN_VERSION from base Dockerfile
         id: extract_version
@@ -123,17 +113,6 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Determine Dockerfile
-        id: determine_dockerfile
-        run: |
-          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
-            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
-          else
-            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
-          fi
 
       - name: Generate suffix tag
         id: generate_suffix
