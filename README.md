@@ -27,7 +27,7 @@ The following CKAN versions are available in base or dev forms. They are disting
 
 | CKAN Version | Type |  Base image | Docker tag | Notes |
 | --- | --- | --- | --- | --- |
-| 2.9.x  | base image | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-base:2.9.12`, `ghcr.io/mjanez/ckan-spatial-base:2.9`                | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. Also avalaible latest official `2.9.11` and latest security backport: `2.9.12` |
+| 2.9.x  | base image | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-base:2.9.12`, `ghcr.io/mjanez/ckan-spatial-base:2.9`                | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. Latest security backport: `2.9.12` also available latest official `2.9.11` in legacy [`ckan-base-spatial:ckan-2.9.11`](https://github.com/mjanez/ckan-docker-spatial/pkgs/container/ckan-base-spatial/193069649?tag=ckan-2.9.11) |
 | 2.9.x  | dev image  | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-dev:2.9.12`, `ghcr.io/mjanez/ckan-spatial-dev:2.9`                  | ... |
 | 2.9.x  | base image | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-base:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-base:2.9.12-py3.9`    | ... |
 | 2.9.x  | dev image  | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-dev:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-dev:2.9.12-py3.9`      | ... |

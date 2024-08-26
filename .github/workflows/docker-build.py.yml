@@ -1,4 +1,4 @@
-name: Build and push Python ckan-spatial images
+name: Build and push Debian-based Python ckan-spatial images
 
 on:
   pull_request:

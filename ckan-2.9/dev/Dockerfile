@@ -13,7 +13,10 @@ ENV GIT_URL=https://github.com/${GIT_ORG}/${GIT_REPO}.git
 RUN apk add --no-cache libffi-dev
 
 # Install CKAN dev requirements
-RUN pip3 install -r https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}}/dev-requirements.txt
+WORKDIR ${SRC_DIR}/ckan
+RUN pip3 install -r https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}/dev-requirements.txt
+
+WORKDIR ${APP_DIR}
 
 # Create folder for local extensions sources
 RUN mkdir -p ${SRC_EXTENSIONS_DIR}
