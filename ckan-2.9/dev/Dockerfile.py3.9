@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-spatial-base:2.9.12
+FROM ghcr.io/mjanez/ckan-spatial-base:2.9.12-py3.9
 
 # CKAN version to build
 ENV GIT_BRANCH=${CKAN_VERSION}
@@ -9,10 +9,9 @@ ENV GIT_ORG=derilinx
 ENV GIT_REPO=ckan-backports
 ENV GIT_URL=https://github.com/${GIT_ORG}/${GIT_REPO}.git
 
-# Install packages needed by the dev requirements
-RUN apk add --no-cache libffi-dev
-
 # Install CKAN dev requirements
+#RUN . ${APP_DIR}/bin/activate && \
+RUN cd ${SRC_DIR}/ckan && \ 
 RUN pip3 install -r https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}}/dev-requirements.txt
 
 # Create folder for local extensions sources

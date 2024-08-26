@@ -1,6 +1,7 @@
 FROM python:3.10-slim-bookworm
 
-ARG CKAN_VERSION=master
+# Neccesary for the build. Github Actions
+ARG CKAN_VERSION=ckan-2.10.5
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC

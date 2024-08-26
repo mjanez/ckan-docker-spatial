@@ -1,7 +1,6 @@
-# Based on official CKAN image. https://github.com/ckan/ckan-docker-base
-FROM ckan/ckan-dev:2.9-py3.9
+FROM ghcr.io/mjanez/ckan-spatial-dev:2.9.12-py3.9
 
-ENV CKAN_VERSION=2.9
+ENV CKAN_VERSION_MAYOR=ckan-2.9
 ENV APP_DIR=/srv/app
 ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_DIR=${SRC_DIR}/ckan
@@ -11,7 +10,7 @@ ENV TZ=UTC
 # Custom scripts from Natural History Museum: https://github.com/NaturalHistoryMuseum/nhm-docker-ckan
 ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
-ARG REPO_BRANCH=ckan-2.9.11-test
+ARG REPO_BRANCH=ckan-2.9
 
 # Install packages needed by test requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -24,16 +23,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         netcat-openbsd \
         util-linux \
         libsasl2-dev \
-        libssl-dev \
-    && apt-get -q clean \
-    && rm -rf /var/lib/apt/lists/*
+        libssl-dev && \
+        # Clean system cache and lists
+        apt-get -q clean && \
+        rm -rf /var/lib/apt/lists/*
 
 ## Copy test_ckan.sh
 COPY setup/test_ckan.sh ${APP_DIR}/test_ckan.sh
 RUN chmod +x ${APP_DIR}/test_ckan.sh
 
 # Conditionally install pytest-rerunfailures if CKAN version is 2.9
-RUN if [ "$CKAN_VERSION" = "2.9" ]; then \
+RUN if [ "$CKAN_VERSION_MAYOR" = "ckan-2.9" ]; then \
         pip3  install -U pytest-rerunfailures; \
     fi
 

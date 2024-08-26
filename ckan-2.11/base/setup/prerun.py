@@ -96,7 +96,7 @@ def check_solr_connection(retry=None):
 
 def init_db():
 
-    db_command = ["ckan", "-c", ckan_ini, "db", "upgrade"]
+    db_command = ["ckan", "-c", ckan_ini, "db", "init"]
     print("[prerun] Initializing or upgrading db - start")
     try:
         subprocess.check_output(db_command, stderr=subprocess.STDOUT)
@@ -140,7 +140,6 @@ def init_datastore_db():
         connection.commit()
 
         print("[prerun] Initializing datastore db - end")
-        print(datastore_perms.stdout.read())
     except psycopg2.Error as e:
         print("[prerun] Could not initialize datastore")
         print(str(e))

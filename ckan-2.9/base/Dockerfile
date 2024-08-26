@@ -1,4 +1,6 @@
 FROM alpine:3.15
+
+# Neccesary for the build. Github Actions
 ARG CKAN_VERSION=ckan-2.9.12
 
 # Internals, you probably don't need to change these
@@ -37,6 +39,7 @@ RUN apk add --no-cache git \
         dcron \
         postgresql-client \
         python3 \
+        py3-pip \
         libxml2 \
         libxslt \
         musl-dev \
@@ -87,6 +90,7 @@ RUN apk add --no-cache git \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
     # Install pip, supervisord and uwsgi
+    pip3 install "webassets==0.12.1" && \
     curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
     python3 ${SRC_DIR}/get-pip.py && \
     pip3 install --no-cache-dir supervisor && \
@@ -100,17 +104,15 @@ COPY setup/supervisord.conf /etc
 RUN pip3 install --no-cache-dir setuptools && \
     #FIX: Temp fix PyYaml Cython 3 erors: https://github.com/yaml/pyyaml/issues/724
     pip3 install --no-cache-dir "cython<3.0.0" wheel && pip3 install --no-cache-dir pyyaml==5.4.1 --no-build-isolation && \
-    pip3 install --no-cache-dir -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
+    pip3 install --no-cache-dir -e git+${GIT_URL}@${CKAN_VERSION}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    #FIX: Temp fix zope-interface
     # Workaround, can be removed when 2.10.2 is released
     # https://github.com/ckan/ckan/pull/7864
     #sed -i 's/pyyaml==6.0/pyyaml==6.0.1/' requirements.txt && \
     # begin workaround
-    #sed -i '/pyyaml==5.4.1/d' requirements.txt && \
-    echo 'Cython < 3.0' > /tmp/constraint.txt && \
-    PIP_CONSTRAINT=/tmp/constraint.txt pip3 install PyYAML==5.4.1 && \
+    pip3 install --no-cache-dir "cython<3.0.0" && \
+    pip3 install --no-cache-dir "pyyaml==5.4.1" --no-build-isolation && \
     # end workaround
     pip3 install --no-cache-dir --no-binary markdown -r https://gist.githubusercontent.com/mjanez/4e0b99543014cb5ad1d739a0a6e0a419/raw/af103ac4f6b3f11e67a8f3ceaccd63fdb424e7ac/requirements.txt && \
     #OLD: requirements.txt ckan/ckan 2.9.11
@@ -124,10 +126,8 @@ RUN pip3 install --no-cache-dir setuptools && \
 
 # Create a local user and group to run the app
 RUN addgroup -g 92 -S ckan && \
-    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan
-
-# Create local storage folder
-RUN mkdir -p ${CKAN_STORAGE_PATH} && \
+    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan && \
+    mkdir -p ${CKAN_STORAGE_PATH} && \
     chown -R ckan:ckan ${CKAN_STORAGE_PATH}
 
 COPY setup/prerun.py ${APP_DIR}
@@ -140,6 +140,6 @@ ONBUILD RUN mkdir /docker-entrypoint.d
 
 EXPOSE 5000
 
-HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail ${CKAN_SITE_URL}/api/3/action/status_show || exit 1
+HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail http://localhost:5000/api/3/action/status_show || exit CMD ["/srv/app/start_ckan.sh"]
 
 CMD ["/srv/app/start_ckan.sh"]

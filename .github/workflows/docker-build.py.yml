@@ -1,23 +1,23 @@
-name: Build and release images manually (Alpine or Python)
+name: Build and push Python ckan-spatial images
 
-on: 
-  workflow_dispatch:
-    inputs:
-      dockerfile:
-        description: 'Type of image to build'
-        required: true
-        default: 'Dockerfile'
-        type: choice
-        options:
-        - Dockerfile
-        - Dockerfile.py3.*
+on:
+  pull_request:
+    types:
+        - closed
+    branches:
+        - master
+        - 'ckan-*.*'
+        - '!ckan-main'
+        - '!dev/ckan-*.*.*'
+        - '!feature/*'
+        - '!fix/*'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
-  BRANCH: ${{ github.ref_name }}
-  DOCKERFILE: ${{ github.event.inputs.dockerfile }}
+  BRANCH: ${{ github.head_ref }}
+  DOCKERFILE: Dockerfile.py3.*
 
 jobs:
   build_and_push_base:

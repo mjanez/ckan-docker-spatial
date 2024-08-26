@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-base-spatial:ckan-2.10.5
+FROM ghcr.io/mjanez/ckan-spatial-base:2.10.5
 
 ENV APP_DIR=/srv/app
 ENV SRC_EXTENSIONS_DIR=/srv/app/src_extensions
@@ -7,7 +7,7 @@ ENV SRC_EXTENSIONS_DIR=/srv/app/src_extensions
 RUN apk add --no-cache libffi-dev
 
 # Install CKAN dev requirements
-RUN pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${GIT_BRANCH}/dev-requirements.txt
+RUN pip3 install -r https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/dev-requirements.txt
 
 # Create folder for local extensions sources
 RUN mkdir -p ${SRC_EXTENSIONS_DIR}

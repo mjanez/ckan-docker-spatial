@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-spatial-base:2.10.5-py3.10
+FROM ghcr.io/mjanez/ckan-spatial-base:2.11.0
 
 ENV APP_DIR=/srv/app
 ENV SRC_EXTENSIONS_DIR=${APP_DIR}/src_extensions

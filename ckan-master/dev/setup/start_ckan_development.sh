@@ -1,4 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+
+if [[ $CKAN__PLUGINS == *"datapusher"* ]]; then
+    # Add ckan.datapusher.api_token to the CKAN config file (updated with corrected value later)
+    echo "Setting a temporary value for ckan.datapusher.api_token"
+    ckan config-tool $CKAN_INI ckan.datapusher.api_token=xxx
+fi
 
 # Install any local extensions in the src_extensions volume
 echo "Looking for local extensions to install..."
@@ -8,6 +14,10 @@ for i in $SRC_EXTENSIONS_DIR/*
 do
     if [ -d $i ];
     then
+    	if [ -d $SRC_DIR/$(basename $i) ];
+        then
+            pip uninstall -y "$(basename $i)"
+        fi
 
         if [ -f $i/pip-requirements.txt ];
         then
@@ -31,6 +41,13 @@ do
             echo "Found setup.py file in $i"
             cd $APP_DIR
         fi
+        if [ -f $i/pyproject.toml ];
+        then
+            cd $i
+            pip install -e .
+            echo "Found pyproject.toml file in $i"
+            cd $APP_DIR
+        fi
 
         # Point `use` in test.ini to location of `test-core.ini`
         if [ -f $i/test.ini ];
@@ -47,9 +64,9 @@ ckan config-tool $CKAN_INI -s DEFAULT "debug = true"
 
 # Set up the Secret key used by Beaker and Flask
 # This can be overriden using a CKAN___BEAKER__SESSION__SECRET env var
-if grep -E "SECRET_KEY ?= ?$" ckan.ini
+if grep -qE "SECRET_KEY ?= ?$" ckan.ini
 then
-    echo "Setting secrets in ini file"
+    echo "Setting SECRET_KEY in ini file"
     ckan config-tool $CKAN_INI "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
     ckan config-tool $CKAN_INI "WTF_CSRF_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
     JWT_SECRET=$(python3 -c 'import secrets; print("string:" + secrets.token_urlsafe())')
@@ -86,12 +103,21 @@ then
     done
 fi
 
-# Start supervisord
-supervisord --configuration /etc/supervisord.conf &
+CKAN_RUN="ckan -c $CKAN_INI run -H 0.0.0.0"
+CKAN_OPTIONS=""
+if [ "$USE_DEBUGPY_FOR_DEV" = true ] ; then
+    pip install debugpy
+    CKAN_RUN="/usr/bin/python -m debugpy --listen 0.0.0.0:5678 $CKAN_RUN"
+    CKAN_OPTIONS="$CKAN_OPTIONS --disable-reloader"
+fi
+
+if [ "$USE_HTTPS_FOR_DEV" = true ] ; then
+    CKAN_OPTIONS="$CKAN_OPTIONS -C unsafe.cert -K unsafe.key"
+fi
 
 # Start the development server as the ckan user with automatic reload
-if [ "$USE_HTTPS_FOR_DEV" = true ] ; then
-    su ckan -c "/usr/bin/ckan -c $CKAN_INI run -H 0.0.0.0 -C unsafe.cert -K unsafe.key"
-else
-    su ckan -c "/usr/bin/ckan -c $CKAN_INI run -H 0.0.0.0"
-fi
+while true; do
+    su ckan -c "$CKAN_RUN $CKAN_OPTIONS"
+    echo Exit with status $?. Restarting.
+    sleep 2
+done
