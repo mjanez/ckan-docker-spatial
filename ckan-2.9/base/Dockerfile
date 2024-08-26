@@ -125,10 +125,8 @@ RUN pip3 install --no-cache-dir setuptools && \
 
 # Create a local user and group to run the app
 RUN addgroup -g 92 -S ckan && \
-    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan
-
-# Create local storage folder
-RUN mkdir -p ${CKAN_STORAGE_PATH} && \
+    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan && \
+    mkdir -p ${CKAN_STORAGE_PATH} && \
     chown -R ckan:ckan ${CKAN_STORAGE_PATH}
 
 COPY setup/prerun.py ${APP_DIR}
@@ -141,6 +139,6 @@ ONBUILD RUN mkdir /docker-entrypoint.d
 
 EXPOSE 5000
 
-HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail ${CKAN_SITE_URL}/api/3/action/status_show || exit 1
+HEALTHCHECK --interval=60s --timeout=5s --retries=5 CMD curl --fail http://localhost:5000/api/3/action/status_show || exit CMD ["/srv/app/start_ckan.sh"]
 
 CMD ["/srv/app/start_ckan.sh"]
