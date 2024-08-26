@@ -39,7 +39,8 @@ jobs:
         run: |
           if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            echo "DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
           else
             echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
           fi
