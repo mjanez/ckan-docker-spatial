@@ -172,7 +172,7 @@ jobs:
 
   build_and_push_test:
     runs-on: ubuntu-latest
-    needs: build_and_push_base
+    needs: build_and_push_dev
     env:
       CKAN_VERSION: ${{ needs.build_and_push_base.outputs.ckan_version }}
     steps:
