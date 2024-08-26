@@ -1,4 +1,4 @@
-name: Build and push ckan-docker images
+name: Test ckan-spatial images (PR)
 
 on:
   pull_request:
@@ -14,114 +14,100 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: mjanez/ckan-base-spatial
+  IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
   BRANCH: ${{ github.head_ref }}
   DOCKERFILE: Dockerfile
+  PYTHON_DOCKERFILE: Dockerfile.py3.*
   HADOLINT_VERSION: 2.12.0
 
 jobs:
   build_and_push_base:
-    name: runner/test-docker-pr:${{ github.head_ref }}.*
+    name: runner/test-ckan-spatial-base-pr:${{ github.head_ref }}.*
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Extract CKAN_VERSION from base Dockerfile
-        id: extract_version
+      - name: Determine Python Dockerfile
+        id: determine_dockerfile
         run: |
-          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./${{ env.BRANCH }}/base/${{ env.DOCKERFILE }})
-          echo "CKAN_VERSION=${CKAN_VERSION}" >> $GITHUB_ENV
+          if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
+            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
+            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+          else
+            echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
+          fi
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Linting Dockerfiles and annotate code inline in the github PR viewer
+      - name: Linting Dockerfile and annotate code inline in the github PR viewer
         id: hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.DOCKERFILE }}
+          version: ${{ env.HADOLINT_VERSION }}
+          annotate: true
+          error_level: -1
+
+      - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
+        id: python_hadolint
+        uses: jbergstroem/hadolint-gh-action@v1.12.2
+        with:
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.PYTHON_DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
 
   build_and_push_dev:
-    name: runner/test-docker-pr:${{ github.head_ref }}.*-dev
+    name: runner/test-ckan-spatial-dev-pr:${{ github.head_ref }}.*
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Extract CKAN_VERSION from dev Dockerfile
-        id: extract_version
+      - name: Determine Python Dockerfile
+        id: determine_dockerfile
         run: |
-          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }})
-          echo "CKAN_VERSION=${CKAN_VERSION}" >> $GITHUB_ENV
+          if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
+            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/dev -name "Dockerfile.py3.*" | head -n 1)
+            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+          else
+            echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
+          fi
 
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Linting Dockerfiles and annotate code inline in the github PR viewer
+      - name: Linting Dockerfile and annotate code inline in the github PR viewer
         id: hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
+          version: ${{ env.HADOLINT_VERSION }}
+          annotate: true
+          error_level: -1
+
+      - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
+        id: python_hadolint
+        uses: jbergstroem/hadolint-gh-action@v1.12.2
+        with:
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.PYTHON_DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
 
   build_and_push_test:
-    name: runner/test-docker-pr:${{ github.head_ref }}.*-test
+    name: runner/test-ckan-spatial-test-pr:${{ github.head_ref }}.*
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Extract CKAN_VERSION from test Dockerfile
-        id: extract_version
-        run: |
-          CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./${{ env.BRANCH }}/test/${{ env.DOCKERFILE }})
-          echo "CKAN_VERSION=${CKAN_VERSION}" >> $GITHUB_ENV
-
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Linting Dockerfiles and annotate code inline in the github PR viewer
+      # Test only use base Dockerfile
+      - name: Linting Dockerfile and annotate code inline in the github PR viewer
         id: hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/Dockerfile
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/${{ env.DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
