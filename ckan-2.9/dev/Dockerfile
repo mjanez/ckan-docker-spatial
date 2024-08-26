@@ -1,7 +1,5 @@
 FROM ghcr.io/mjanez/ckan-spatial-base:2.9.12
 
-# CKAN version to build
-ENV GIT_BRANCH=${CKAN_VERSION}
 ENV APP_DIR=/srv/app
 ENV SRC_EXTENSIONS_DIR=/srv/app/src_extensions
 # CKAN backports repository for >2.9.11 releases
@@ -13,7 +11,10 @@ ENV GIT_URL=https://github.com/${GIT_ORG}/${GIT_REPO}.git
 RUN apk add --no-cache libffi-dev
 
 # Install CKAN dev requirements
-RUN pip3 install -r https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}}/dev-requirements.txt
+WORKDIR ${SRC_DIR}/ckan
+RUN pip3 install -r https://raw.githubusercontent.com/${GIT_ORG}/${GIT_REPO}/${GIT_BRANCH}/dev-requirements.txt
+
+WORKDIR ${APP_DIR}
 
 # Create folder for local extensions sources
 RUN mkdir -p ${SRC_EXTENSIONS_DIR}

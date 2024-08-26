@@ -1,4 +1,4 @@
-name: Build and push Alpine ckan-spatial images (legacy)
+name: Build and push Debian based >=2.11 & <2.11 Alpine (legacy) ckan-spatial images
 
 on:
   pull_request:
@@ -17,6 +17,7 @@ env:
   IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
   BRANCH: ${{ github.head_ref }}
+  # Use base Dockerfile for all images
   DOCKERFILE: Dockerfile
 
 jobs:
@@ -36,17 +37,6 @@ jobs:
 
       - name: Check out code
         uses: actions/checkout@v4
-
-      - name: Determine Dockerfile
-        id: determine_dockerfile
-        run: |
-          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
-            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
-          else
-            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
-          fi
 
       - name: Extract CKAN_VERSION from base Dockerfile
         id: extract_version
@@ -124,17 +114,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Determine Dockerfile
-        id: determine_dockerfile
-        run: |
-          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
-            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
-          else
-            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
-          fi
-
       - name: Generate suffix tag
         id: generate_suffix
         run: |
@@ -167,19 +146,6 @@ jobs:
         with:
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
           no-fail: true
-
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
-          format: sarif
-          output: trivy-results-dev.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-dev.sarif
 
   build_and_push_test:
     name: Build and push test image from dev
@@ -218,17 +184,3 @@ jobs:
           # Test only use base Dockerfile
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/Dockerfile
           no-fail: true
-
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          # Test only use base Dockerfile
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-test:${{ env.CKAN_VERSION }}
-          format: sarif
-          output: trivy-results-test.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-test.sarif

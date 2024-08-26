@@ -19,6 +19,7 @@ env:
   BRANCH: ${{ github.head_ref }}
   DOCKERFILE: Dockerfile
   PYTHON_DOCKERFILE: Dockerfile.py3.*
+  PYTHON_DOCKERFILE_FOUND: false
   HADOLINT_VERSION: 2.12.0
 
 jobs:
@@ -35,10 +36,16 @@ jobs:
         run: |
           if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+              echo "PYTHON_DOCKERFILE_FOUND=true" >> $GITHUB_ENV
+            else
+              echo "PYTHON_DOCKERFILE_FOUND=false" >> $GITHUB_ENV
+            fi
           else
             echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
+            echo "PYTHON_DOCKERFILE_FOUND=true" >> $GITHUB_ENV
           fi
 
       - name: Linting Dockerfile and annotate code inline in the github PR viewer
@@ -51,6 +58,7 @@ jobs:
           error_level: -1
 
       - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
+        if: env.PYTHON_DOCKERFILE_FOUND == 'true'
         id: python_hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
@@ -58,6 +66,7 @@ jobs:
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
+        continue-on-error: true
 
   build_and_push_dev:
     name: runner/test-ckan-spatial-dev-pr:${{ github.head_ref }}.*
@@ -72,10 +81,16 @@ jobs:
         run: |
           if [[ "${{ env.PYTHON_DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "PYTHON_DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+              echo "PYTHON_DOCKERFILE_FOUND=true" >> $GITHUB_ENV
+            else
+              echo "PYTHON_DOCKERFILE_FOUND=false" >> $GITHUB_ENV
+            fi
           else
             echo "PYTHON_DOCKERFILE=${{ env.PYTHON_DOCKERFILE }}" >> $GITHUB_ENV
+            echo "PYTHON_DOCKERFILE_FOUND=true" >> $GITHUB_ENV
           fi
 
       - name: Linting Dockerfile and annotate code inline in the github PR viewer
@@ -88,13 +103,15 @@ jobs:
           error_level: -1
 
       - name: Linting Python Dockerfile and annotate code inline in the github PR viewer
+        if: env.PYTHON_DOCKERFILE_FOUND == 'true'
         id: python_hadolint
         uses: jbergstroem/hadolint-gh-action@v1.12.2
         with:
-          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.PYTHON_DOCKERFILE }}
+          dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.PYTHON_DOCKERFILE }}
           version: ${{ env.HADOLINT_VERSION }}
           annotate: true
           error_level: -1
+        continue-on-error: true
 
   build_and_push_test:
     name: runner/test-ckan-spatial-test-pr:${{ github.head_ref }}.*

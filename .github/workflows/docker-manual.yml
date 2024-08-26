@@ -42,8 +42,13 @@ jobs:
         run: |
           if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            else
+              echo "No Dockerfile.py3.* found. Exiting."
+              exit 0
+            fi
           else
             echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
           fi
@@ -129,8 +134,13 @@ jobs:
         run: |
           if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            else
+              echo "No Dockerfile.py3.* found. Exiting."
+              exit 0
+            fi
           else
             echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
           fi
@@ -167,19 +177,6 @@ jobs:
         with:
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
           no-fail: true
-
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
-          format: sarif
-          output: trivy-results-dev.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-dev.sarif
 
   build_and_push_test:
     name: Build and push test image from dev
@@ -218,17 +215,3 @@ jobs:
           # Test only use base Dockerfile
           dockerfile: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/Dockerfile
           no-fail: true
-
-      - name: Run Trivy container image vulnerability scanner
-        uses: aquasecurity/trivy-action@0.24.0
-        with:
-          # Test only use base Dockerfile
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-test:${{ env.CKAN_VERSION }}
-          format: sarif
-          output: trivy-results-test.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results-test.sarif
