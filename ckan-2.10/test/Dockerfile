@@ -1,5 +1,4 @@
-# Based on official CKAN image. https://github.com/ckan/ckan-docker-base
-FROM ckan/ckan-dev:2.10.5-py3.10
+FROM ghcr.io/mjanez/ckan-spatial-dev:2.10.5-py3.10
 
 ENV CKAN_VERSION=2.10
 ENV APP_DIR=/srv/app

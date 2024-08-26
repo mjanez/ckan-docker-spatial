@@ -1,119 +1,91 @@
-FROM alpine:3.17
+FROM python:3.10-slim-bookworm
+
 ARG CKAN_VERSION=master
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC
 ENV APP_DIR=/srv/app
-ENV SRC_DIR=/srv/app/src
+ENV SRC_DIR=${APP_DIR}/src
 ENV CKAN_INI=${APP_DIR}/ckan.ini
 ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
 ENV GIT_URL=https://github.com/ckan/ckan.git
-# CKAN version to build
-ENV GIT_BRANCH=${CKAN_VERSION}
-# Customize these on the .env file if needed
+
+# Customize these in the environment (.env) file if needed
 ENV CKAN_SITE_URL=http://localhost:5000
-ENV CKAN__PLUGINS image_view text_view datatables_view datastore envvars
+ENV CKAN__PLUGINS="image_view text_view recline_view datastore envvars"
 
 # UWSGI options
 ENV UWSGI_HARAKIRI=50
 
 WORKDIR ${APP_DIR}
 
-# Set up timezone
-RUN apk add --no-cache tzdata  && \
-    echo ${TZ} > /etc/timezone && \
-    if ! [ /usr/share/zoneinfo/${TZ} -ef /etc/localtime ]; then \
-        cp /usr/share/zoneinfo/${TZ} /etc/localtime ;\
-    fi
+# Set LC_ALL=en_US.UTF-8 will ensure that all locale-dependent operations in the current environment 
+# will use English language and United States cultural conventions with UTF-8 character encoding
+ENV LC_ALL=en_US.UTF-8
 
-# Install necessary packages to run CKAN
-RUN apk add --no-cache git \
-        wget \
-        wget \
-        gettext \
-        dcron \
-        postgresql-client \
-        python3 \
-        libxml2 \
-        libxslt \
-        musl-dev \
-        uwsgi \
-        uwsgi-http \
-        uwsgi-corerouter \
-        uwsgi-python \
-        py3-gevent \
-        uwsgi-gevent \
-        libmagic \
-        curl \
-        sed \
-        patch && \
-    # Packages to build CKAN requirements and plugins
-    apk add --no-cache --virtual .build-deps \
-        postgresql-dev \
-        gcc \
-        make \
+# Set up timezone, locale, and install system libraries
+RUN echo ${TZ} > /etc/timezone && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y locales && \
+    sed -i "/$LC_ALL/s/^# //g" /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=${LC_ALL} && \
+    # System libraries
+    apt-get install --no-install-recommends -y \
+        apt-utils \
+        git \
+        libpq-dev \
         g++ \
-        autoconf \
-        automake \
-    	libtool \
-        python3-dev \
-        libxml2-dev \
-        libxslt-dev \
-        linux-headers \
-        openssl-dev \
-        libffi-dev \
-        cargo \
-    # Set up PROJ
-        geos-dev \
-        proj \
-        proj-util \
-        proj-dev \
-        curl-dev \
+        linux-headers-generic \
+        libtool \
+        wget \
+        # Set up PROJ for spatial support
+        libgeos-dev \
+        proj-bin \
+        proj-data \
+        libproj-dev \
+        libcurl4-openssl-dev \
         cmake \
-        tiff-dev \
-        sqlite \
-        sqlite-dev \
-        gtest-dev \
+        libtiff-dev \
+        sqlite3 \
+        libsqlite3-dev \
+        googletest \
         unzip && \
-    rm -rf /var/cache/apk/* && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
-    # Install pip, supervisord and uwsgi
-    curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
-    python3 ${SRC_DIR}/get-pip.py && \
-    pip3 install --no-cache-dir supervisor && \
+    # Install supervisord and create the supervisord.d directory
+    apt-get install --no-install-recommends -y \
+    supervisor && \
     mkdir /etc/supervisord.d && \
-    rm -rf ${SRC_DIR}/get-pip.py
+    apt-get clean
 
 COPY setup/supervisord.conf /etc
 
-# Install CKAN
-RUN pip3 install --no-cache-dir -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
-    cd ${SRC_DIR}/ckan && \
+# Install uwsgi, the CKAN application, the dependency packages for CKAN plus some confiquration
+RUN pip3 install --no-cache-dir -U pip && \
+    pip3 install --no-cache-dir uwsgi && \
+    cd ${SRC_DIR} && \
+    pip3 install --no-cache-dir -e git+${GIT_URL}@${CKAN_VERSION}#egg=ckan && \
+    cd ckan && \
     cp who.ini ${APP_DIR} && \
-    # Workaround, can be removed when this is merged
-    # https://github.com/ckan/ckan/pull/7936
-    sed -i 's/backports-zoneinfo==0.2.1//' requirements.txt && \
     pip3 install --no-cache-dir --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
     pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
     # Create and update CKAN config
     ckan generate config ${CKAN_INI} && \
-    ckan config-tool ${CKAN_INI} "SECRET_KEY = " && \
+    ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
     ckan config-tool ${CKAN_INI} "ckan.plugins = ${CKAN__PLUGINS}"
 
-# Create a local user and group to run the app
-RUN addgroup -g 92 -S ckan && \
-    adduser -u 92 -h /home/ckan -s /bin/bash -D -G ckan ckan
-
-# Create local storage folder
-RUN mkdir -p ${CKAN_STORAGE_PATH} && \
+# Create a local user and group plus set up the storage path
+RUN groupadd -g 92 ckan && \
+    useradd -rm -d /srv/app -s /bin/bash -g ckan -u 92 ckan && \
+    mkdir -p ${CKAN_STORAGE_PATH} && \
     chown -R ckan:ckan ${CKAN_STORAGE_PATH}
 
 COPY setup/prerun.py ${APP_DIR}
 COPY setup/start_ckan.sh ${APP_DIR}
-ADD https://raw.githubusercontent.com/ckan/ckan/${GIT_BRANCH}/wsgi.py ${APP_DIR}
+ADD https://raw.githubusercontent.com/ckan/ckan/${CKAN_VERSION}/wsgi.py ${APP_DIR}
 RUN chmod 644 ${APP_DIR}/wsgi.py
 
 # Create entrypoint directory for children image scripts

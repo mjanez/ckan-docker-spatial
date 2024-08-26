@@ -19,5 +19,3 @@ push: ## Push a CKAN 2.x-test image to the DockerHub registry, `make push`
 	docker push $(TAG_NAME)
 	echo "Pushing $(ALT_TAG_NAME) image"
 	docker push $(ALT_TAG_NAME)
-
-

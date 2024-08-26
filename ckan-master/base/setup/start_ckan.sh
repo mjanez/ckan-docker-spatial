@@ -1,10 +1,16 @@
 #!/bin/bash
 
+if [[ $CKAN__PLUGINS == *"datapusher"* ]]; then
+    # Add ckan.datapusher.api_token to the CKAN config file (updated with corrected value later)
+    echo "Setting a temporary value for ckan.datapusher.api_token"
+    ckan config-tool $CKAN_INI ckan.datapusher.api_token=xxx
+fi
+
 # Set up the Secret key used by Beaker and Flask
 # This can be overriden using a CKAN___BEAKER__SESSION__SECRET env var
 if grep -qE "SECRET_KEY ?= ?$" ckan.ini
 then
-    echo "Setting secrets in ini file"
+    echo "Setting SECRET_KEY in ini file"
     ckan config-tool $CKAN_INI "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
     ckan config-tool $CKAN_INI "WTF_CSRF_SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_urlsafe())')"
     JWT_SECRET=$(python3 -c 'import secrets; print("string:" + secrets.token_urlsafe())')
@@ -33,7 +39,7 @@ UWSGI_OPTS="--plugins http,python \
             --wsgi-file /srv/app/wsgi.py \
             --module wsgi:application \
             --uid 92 --gid 92 \
-            --http 0.0.0.0:5000 \
+            --http [::]:5000 \
             --master --enable-threads \
             --lazy-apps \
             -p 2 -L -b 32768 --vacuum \

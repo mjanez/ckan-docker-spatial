@@ -1,14 +1,14 @@
 .PHONY: all help build build-all push
 SHELL := /bin/bash
-CKAN_VERSION=2.9.11
+CKAN_VERSION=2.9.12
 PYTHON_VERSION=3.9
 PYTHON.DOCKERFILE=Dockerfile.py$(PYTHON_VERSION)
 CKAN_VERSION_MAJOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f1)
 CKAN_VERSION_MINOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f2)
-TAG_NAME="mjanez/ckan-dev:$(CKAN_VERSION)"
-ALT_TAG_NAME="mjanez/ckan-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
-PYTHON_TAG_NAME="mjanez/ckan-dev:$(CKAN_VERSION)-py$(PYTHON_VERSION)"
-PYTHON_ALT_TAG_NAME="mjanez/ckan-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)-py$(PYTHON_VERSION)"
+TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION)"
+ALT_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
+PYTHON_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION)-py$(PYTHON_VERSION)"
+PYTHON_ALT_TAG_NAME="mjanez/ckan-spatial-dev:$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)-py$(PYTHON_VERSION)"
 
 all: help
 help:

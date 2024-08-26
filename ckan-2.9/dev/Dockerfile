@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-spatial-base:ckan-2.9.12
+FROM ghcr.io/mjanez/ckan-spatial-base:2.9.12
 
 # CKAN version to build
 ENV GIT_BRANCH=${CKAN_VERSION}

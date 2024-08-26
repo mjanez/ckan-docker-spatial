@@ -3,8 +3,8 @@ SHELL := /bin/bash
 CKAN_VERSION=2.9.12
 CKAN_VERSION_MAJOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f1)
 CKAN_VERSION_MINOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f2)
-TAG_NAME="mjanez/ckan-base-spatial:ckan-$(CKAN_VERSION)-test"
-ALT_TAG_NAME="mjanez/ckan-base-spatial:ckan-$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)-test"
+TAG_NAME="mjanez/ckan-spatial-test:ckan-$(CKAN_VERSION)"
+ALT_TAG_NAME="mjanez/ckan-spatial-test:ckan-$(CKAN_VERSION_MAJOR).$(CKAN_VERSION_MINOR)"
 
 all: help
 help:
@@ -19,5 +19,3 @@ push: ## Push a CKAN 2.x-test image to the DockerHub registry, `make push`
 	docker push $(TAG_NAME)
 	echo "Pushing $(ALT_TAG_NAME) image"
 	docker push $(ALT_TAG_NAME)
-
-
