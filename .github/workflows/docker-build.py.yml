@@ -17,6 +17,7 @@ env:
   IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
   BRANCH: ${{ github.head_ref }}
+  # Use Dockerfile.py3.* for only Debian-based Python images 
   DOCKERFILE: Dockerfile.py3.*
 
 jobs:
@@ -42,8 +43,13 @@ jobs:
         run: |
           if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            else
+              echo "No Dockerfile.py3.* found. Exiting."
+              exit 0
+            fi
           else
             echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
           fi
@@ -129,8 +135,13 @@ jobs:
         run: |
           if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
             REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
-            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
-            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            if [[ -n "$REAL_DOCKERFILE" ]]; then
+              REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+              echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+            else
+              echo "No Dockerfile.py3.* found. Exiting."
+              exit 0
+            fi
           else
             echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
           fi
