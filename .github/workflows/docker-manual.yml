@@ -1,13 +1,23 @@
 name: Build and release images manually
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      dockerfile:
+        description: 'Type of image to build'
+        required: true
+        default: 'Dockerfile'
+        type: choice
+        options:
+        - Dockerfile
+        - Dockerfile.py3.*
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: mjanez/ckan-base-spatial
+  IMAGE_NAME: mjanez/ckan-spatial
   CONTEXT: .
   BRANCH: ${{ github.ref_name }}
-  DOCKERFILE: Dockerfile
+  DOCKERFILE: ${{ github.event.inputs.dockerfile }}
 
 jobs:
   build_and_push_base:
@@ -24,13 +34,33 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Determine Dockerfile
+        id: determine_dockerfile
+        run: |
+          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
+            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
+            echo "DOCKERFILE=${REAL_DOCKERFILE}" >> $GITHUB_ENV
+          else
+            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
+          fi
+
       - name: Extract CKAN_VERSION from base Dockerfile
         id: extract_version
         run: |
           CKAN_VERSION=$(grep -oP '(?<=^ARG CKAN_VERSION=ckan-)[0-9]+\.[0-9]+\.[0-9]+' ./${{ env.BRANCH }}/base/${{ env.DOCKERFILE }})
-          echo "::set-output name=ckan_version::${CKAN_VERSION}"
+          echo "ckan_version=${CKAN_VERSION}" >> $GITHUB_OUTPUT
 
-      - name: Login to registry
+      - name: Generate suffix tag
+        id: generate_suffix
+        run: |
+          if [ "${{ env.DOCKERFILE }}" = "Dockerfile" ]; then
+            echo "suffix_tag=" >> $GITHUB_OUTPUT
+          else
+            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed 's/Dockerfile/-/')
+            echo "suffix_tag=${SUFFIX}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -50,11 +80,11 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ steps.extract_version.outputs.ckan_version }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-base:${{ steps.extract_version.outputs.ckan_version }}${{ steps.generate_suffix.outputs.suffix_tag }}
           labels: ${{ steps.meta.outputs.labels }}
           context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base
           file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/base/${{ env.DOCKERFILE }}
-
+        
       - name: Linting Dockerfile with hadolint in GH Actions
         uses: hadolint/hadolint-action@v3.1.0
         with:
@@ -64,7 +94,7 @@ jobs:
       - name: Run Trivy container image vulnerability scanner
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ steps.extract_version.outputs.ckan_version }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-base:${{ steps.extract_version.outputs.ckan_version }}${{ steps.generate_suffix.outputs.suffix_tag }}
           format: sarif
           output: trivy-results-base.sarif
 
@@ -83,6 +113,16 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Generate suffix tag
+        id: generate_suffix
+        run: |
+          if [ "${{ env.DOCKERFILE }}" = "Dockerfile" ]; then
+            echo "suffix_tag=" >> $GITHUB_OUTPUT
+          else
+            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed 's/Dockerfile/-/')
+            echo "suffix_tag=${SUFFIX}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Login to registry
         uses: docker/login-action@v3
         with:
@@ -94,7 +134,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ env.CKAN_VERSION }}-dev
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
           labels: ${{ needs.build_and_push_base.outputs.meta.outputs.labels }}
           context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev
           file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/dev/${{ env.DOCKERFILE }}
@@ -108,7 +148,7 @@ jobs:
       - name: Run Trivy container image vulnerability scanner
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ env.CKAN_VERSION }}-dev
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-dev:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
           format: sarif
           output: trivy-results-dev.sarif
 
@@ -127,6 +167,16 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Generate suffix tag
+        id: generate_suffix
+        run: |
+          if [ "${{ env.DOCKERFILE }}" = "Dockerfile" ]; then
+            echo "suffix_tag=" >> $GITHUB_OUTPUT
+          else
+            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed 's/Dockerfile/-/')
+            echo "suffix_tag=${SUFFIX}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Login to registry
         uses: docker/login-action@v3
         with:
@@ -138,7 +188,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ env.CKAN_VERSION }}-test
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-test:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
           labels: ${{ needs.build_and_push_base.outputs.meta.outputs.labels }}
           context: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test
           file: ${{ env.CONTEXT }}/${{ env.BRANCH }}/test/${{ env.DOCKERFILE }}
@@ -152,7 +202,7 @@ jobs:
       - name: Run Trivy container image vulnerability scanner
         uses: aquasecurity/trivy-action@0.24.0
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:ckan-${{ env.CKAN_VERSION }}-test
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-test:${{ env.CKAN_VERSION }}${{ steps.generate_suffix.outputs.suffix_tag }}
           format: sarif
           output: trivy-results-test.sarif
 
