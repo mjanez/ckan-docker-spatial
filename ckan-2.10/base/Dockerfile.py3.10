@@ -20,22 +20,19 @@ ENV UWSGI_HARAKIRI=50
 
 WORKDIR ${APP_DIR}
 
-# Set up timezone
-RUN echo ${TZ} > /etc/timezone
-
 # Set LC_ALL=en_US.UTF-8 will ensure that all locale-dependent operations in the current environment 
 # will use English language and United States cultural conventions with UTF-8 character encoding
 ENV LC_ALL=en_US.UTF-8
 
-# Set the locale          
-RUN apt-get update
-RUN apt-get install --no-install-recommends -y locales
-RUN sed -i "/$LC_ALL/s/^# //g" /etc/locale.gen
-RUN dpkg-reconfigure --frontend=noninteractive locales 
-RUN update-locale LANG=${LC_ALL}
-
-# Install system libraries
-RUN apt-get install --no-install-recommends -y \
+# Set up timezone, locale, and install system libraries
+RUN echo ${TZ} > /etc/timezone && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y locales && \
+    sed -i "/$LC_ALL/s/^# //g" /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=${LC_ALL} && \
+    # System libraries
+    apt-get install --no-install-recommends -y \
         apt-utils \
         git \
         libpq-dev \
@@ -55,13 +52,13 @@ RUN apt-get install --no-install-recommends -y \
         libsqlite3-dev \
         googletest \
         unzip && \
-        rm -rf /var/lib/apt/lists/* && \
-        # Create SRC_DIR
-        mkdir -p ${SRC_DIR} && \
-        # Install supervisord and create the supervisord.d directory
-        apt-get install --no-install-recommends -y \
-        supervisor && \
-        mkdir /etc/supervisord.d
+    # Create SRC_DIR
+    mkdir -p ${SRC_DIR} && \
+    # Install supervisord and create the supervisord.d directory
+    apt-get install --no-install-recommends -y \
+    supervisor && \
+    mkdir /etc/supervisord.d && \
+    apt-get clean
 
 COPY setup/supervisord.conf /etc
 
