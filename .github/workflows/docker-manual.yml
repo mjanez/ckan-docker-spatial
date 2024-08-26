@@ -1,4 +1,4 @@
-name: Build and release images manually (Alpine and Python)
+name: Build and release images manually (Alpine or Python)
 
 on: 
   workflow_dispatch:
@@ -57,8 +57,8 @@ jobs:
           if [ "${{ env.DOCKERFILE }}" = "Dockerfile" ]; then
             echo "suffix_tag=" >> $GITHUB_OUTPUT
           else
-            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed 's/Dockerfile/-/')
-            echo "suffix_tag=${SUFFIX}" >> $GITHUB_OUTPUT
+            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed -E 's/Dockerfile\.py([0-9]+)\./py\1./')
+            echo "suffix_tag=-${SUFFIX}" >> $GITHUB_OUTPUT
           fi
 
       - name: Login to GitHub Container Registry
@@ -114,14 +114,25 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Determine Dockerfile
+        id: determine_dockerfile
+        run: |
+          if [[ "${{ env.DOCKERFILE }}" == "Dockerfile.py3.*" ]]; then
+            REAL_DOCKERFILE=$(find ./${{ env.BRANCH }}/base -name "Dockerfile.py3.*" | head -n 1)
+            REAL_DOCKERFILE_NAME=$(basename $REAL_DOCKERFILE)
+            echo "DOCKERFILE=${REAL_DOCKERFILE_NAME}" >> $GITHUB_ENV
+          else
+            echo "DOCKERFILE=${{ env.DOCKERFILE }}" >> $GITHUB_ENV
+          fi
+
       - name: Generate suffix tag
         id: generate_suffix
         run: |
           if [ "${{ env.DOCKERFILE }}" = "Dockerfile" ]; then
             echo "suffix_tag=" >> $GITHUB_OUTPUT
           else
-            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed 's/Dockerfile/-/')
-            echo "suffix_tag=${SUFFIX}" >> $GITHUB_OUTPUT
+            SUFFIX=$(echo ${{ env.DOCKERFILE }} | sed -E 's/Dockerfile\.py([0-9]+)\./py\1./')
+            echo "suffix_tag=-${SUFFIX}" >> $GITHUB_OUTPUT
           fi
 
       - name: Login to registry
