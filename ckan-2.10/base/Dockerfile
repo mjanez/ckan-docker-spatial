@@ -1,4 +1,4 @@
-FROM alpine:3.17
+FROM alpine:3.21.2
 
 # Neccesary for the build. Github Actions
 ARG CKAN_VERSION=ckan-2.10.5
