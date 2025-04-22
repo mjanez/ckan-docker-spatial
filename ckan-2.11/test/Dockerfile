@@ -1,4 +1,4 @@
-FROM ghcr.io/mjanez/ckan-spatial-dev:2.11.0
+FROM ghcr.io/mjanez/ckan-spatial-dev:2.11.2
 
 ENV CKAN_VERSION_MAYOR=2.11
 ENV APP_DIR=/srv/app

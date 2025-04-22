@@ -1,6 +1,6 @@
 .PHONY: all help build build-all push
 SHELL := /bin/bash
-CKAN_VERSION=2.10.5
+CKAN_VERSION=2.10.7
 CKAN_VERSION_MAJOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f1)
 CKAN_VERSION_MINOR=$(shell echo $(CKAN_VERSION) | cut -d'.' -f2)
 TAG_NAME="mjanez/ckan-spatial-test:ckan-$(CKAN_VERSION)"

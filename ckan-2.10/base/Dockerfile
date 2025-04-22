@@ -1,7 +1,7 @@
 FROM alpine:3.17
 
 # Neccesary for the build. Github Actions
-ARG CKAN_VERSION=ckan-2.10.5
+ARG CKAN_VERSION=ckan-2.10.7
 
 # Internals, you probably don't need to change these
 ENV TZ=UTC
@@ -43,7 +43,7 @@ RUN apk add --no-cache git \
     uwsgi-http \
     uwsgi-corerouter \
     uwsgi-python \
-    # Remove py3-gevent. # CKAN install a newer version of needed packages. ckan/ckan:2.10.5: https://github.com/ckan/ckan/commit/b6d88dba0483eac68d43c6adcb2521f6d6f1bacb
+    # Remove py3-gevent. # CKAN install a newer version of needed packages. ckan/ckan:2.10.7: https://github.com/ckan/ckan/commit/b6d88dba0483eac68d43c6adcb2521f6d6f1bacb
     #py3-gevent \
     uwsgi-gevent \
     libmagic \
