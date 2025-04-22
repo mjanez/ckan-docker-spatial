@@ -47,7 +47,6 @@ RUN apk add --no-cache git \
         uwsgi-http \
         uwsgi-corerouter \
         uwsgi-python \
-        py3-gevent \
         uwsgi-gevent \
         libmagic \
         curl \
@@ -118,7 +117,7 @@ RUN pip3 install --no-cache-dir setuptools && \
     #OLD: requirements.txt ckan/ckan 2.9.11
     #pip3 install --no-cache-dir --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
-    pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
+    pip3 install --no-cache-dir -e git+https://github.com/okfn/ckanext-envvars.git@v0.0.6#egg=ckanext-envvars && \
     # Create and update CKAN config
     ckan generate config ${CKAN_INI} && \
     ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
