@@ -31,12 +31,12 @@ The following CKAN versions are available in base or dev forms. They are disting
 | 2.9.x  | dev image  | `alpine:3.15`               | `ghcr.io/mjanez/ckan-spatial-dev:2.9.12`, `ghcr.io/mjanez/ckan-spatial-dev:2.9`                  | ... |
 | 2.9.x  | base image | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-base:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-base:2.9.12-py3.9`    | ... |
 | 2.9.x  | dev image  | `python:3.9-slim-bookworm`  | `ghcr.io/mjanez/ckan-spatial-dev:2.9-py3.9`, `ghcr.io/mjanez/ckan-spatial-dev:2.9.12-py3.9`      | ... |
-| 2.10.x | base image | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-base:2.10.5`, `ghcr.io/mjanez/ckan-spatial-base:2.10`               | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
-| 2.10.x | dev image  | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-dev:2.10.5`, `ghcr.io/mjanez/ckan-spatial-dev:2.10`                 | ... |
-| 2.10.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.10.5-py3.10` | ... |
-| 2.10.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.10.5-py3.10`   | ... |
-| 2.11.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.11`, `ghcr.io/mjanez/ckan-spatial-base:2.11.0`, `ghcr.io/mjanez/ckan-spatial-base:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.11.0-py3.10`          | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. `>= ckan-2.9.11` Python images only. |
-| 2.11.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.11`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.0`, `ghcr.io/mjanez/ckan-spatial-dev:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.0-py3.10`            | ... |
+| 2.10.x | base image | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-base:2.10.7`, `ghcr.io/mjanez/ckan-spatial-base:2.10`               | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. |
+| 2.10.x | dev image  | `alpine:3.17`               | `ghcr.io/mjanez/ckan-spatial-dev:2.10.7`, `ghcr.io/mjanez/ckan-spatial-dev:2.10`                 | ... |
+| 2.10.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.10.7-py3.10` | ... |
+| 2.10.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.10-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.10.7-py3.10`   | ... |
+| 2.11.x | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:2.11`, `ghcr.io/mjanez/ckan-spatial-base:2.11.2`, `ghcr.io/mjanez/ckan-spatial-base:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-base:2.11.2-py3.10`          | Includes dependencies for spatial capabilities. Compatible with ckanext-spatial. `>= ckan-2.9.11` Python images only. |
+| 2.11.x | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:2.11`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.2`, `ghcr.io/mjanez/ckan-spatial-dev:2.11-py3.10`, `ghcr.io/mjanez/ckan-spatial-dev:2.11.2-py3.10`            | ... |
 | master | base image | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-base:master`, `ghcr.io/mjanez/ckan-spatial-base:master-py3.10`      | Latest `ckan-spatial-base` image from [`ckan/ckan:master`](https://github.com/ckan/ckan), do not use in production |
 | master | dev image  | `python:3.10-slim-bookworm` | `ghcr.io/mjanez/ckan-spatial-dev:master`, `ghcr.io/mjanez/ckan-spatial-dev:master-py3.10`        | ... |
 
@@ -94,7 +94,7 @@ To test an extension against the CKAN version you want to use, proceed as follow
 
 2. Check that `docker/Dockerfile` contains all the steps needed for your extension, i.e: 
     ```dockerfile
-    FROM ghcr.io/mjanez/ckan-spatial-test:2.10.5
+    FROM ghcr.io/mjanez/ckan-spatial-test:2.10.7
 
     ENV CKAN_VERSION_MAYOR=ckan-2.9
     ENV APP_DIR=/srv/app
