@@ -12,6 +12,8 @@ ARG REPO_NAME=ckan-docker-spatial
 ARG REPO_URL=https://github.com/mjanez/${REPO_NAME}.git
 ARG REPO_BRANCH=ckan-2.10
 
+USER root
+
 # Install packages needed by test requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
         # install packages for additional bits and bobs (like the entrypoint script)

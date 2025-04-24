@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
-## Unreleased
+## ckan-2.11
 
 <small>[Compare with latest (ckan-2.10.5)](https://github.com/mjanez/ckan-docker-spatial/compare/ckan-2.10.5...ckan-2.11)</small>
 
