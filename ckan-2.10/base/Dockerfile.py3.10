@@ -1,4 +1,4 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.13.3-slim-bookworm
 
 # Neccesary for the build. Github Actions
 ARG CKAN_VERSION=ckan-2.10.7
